@@ -1,5 +1,10 @@
 package Services;
 
-public class CustomerService {
+import Repositories.CustomerRepository;
 
+public class CustomerService {
+    private final CustomerRepository customerRepository;
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 }

@@ -1,6 +1,23 @@
 
-import View.MenuGenerator;
+import View.CustomerView;
+import View.MainView;
+import View.ProductView;
+import View.ReportView;
+import View.SalesTransactionView;
+
 import java.util.Scanner;
+
+import Controller.CustomerController;
+import Controller.ProductController;
+import Controller.ReportController;
+import Controller.SalesTransactionController;
+import Repositories.CustomerRepository;
+import Repositories.ProductRepository;
+import Repositories.SalesTransactionRepository;
+import Services.CustomerService;
+import Services.ProductService;
+import Services.ReportService;
+import Services.SalesTransactionService;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -18,28 +35,44 @@ public class SalesManagementSystem {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int choice = 0;
         Scanner scanner = new Scanner(System.in);
-        do {
-            View.MenuGenerator.displayMainMenu();
-            choice = scanner.nextInt();
-            switch (choice) {
-                case 1:
-                    MenuGenerator.displayProductMenu();
-                    break;
-                case 2:
-                    MenuGenerator.displayCustomerMenu();
-                    break;
-                case 3:
-                    MenuGenerator.displayOrderMenu();
-                    break;
-                case 4:
-                    System.out.println("Exiting the system. Goodbye!");
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-            }
-        } while (choice != 4);
+
+        ProductRepository productRepo = new ProductRepository();
+        CustomerRepository customerRepo = new CustomerRepository();
+        SalesTransactionRepository salesTransactionRepo = new SalesTransactionRepository();
+        //cho nay load du lieu tu file
+        try {
+            productRepo.loadFromFile();
+            customerRepo.loadFromFile();
+            salesTransactionRepo.loadFromFile();
+            System.out.println(">> Nạp dữ liệu cũ thành công!");
+        } catch (Exception e) {
+            System.out.println(">> Chưa có dữ liệu cũ hoặc lỗi đọc file. Hệ thống sẽ khởi tạo mới.");
+        }
+
+        
+        ProductService productService = new ProductService(productRepo);
+        CustomerService customerService = new CustomerService(customerRepo);
+        
+        SalesTransactionService salesTransactionService = new SalesTransactionService(
+            salesTransactionRepo, productRepo, customerRepo
+        );
+        ReportService reportService = new ReportService(salesTransactionRepo, productRepo, customerRepo);
+        
+        ProductController productController = new ProductController(productService);
+        CustomerController customerController = new CustomerController(customerService);
+        SalesTransactionController salesTransactionController = new SalesTransactionController(salesTransactionService);
+        ReportController reportController = new ReportController(reportService);
+        
+        ProductView productView = new ProductView(productController, scanner);
+        CustomerView customerView = new CustomerView(customerController, scanner);
+        SalesTransactionView salesTransactionView = new SalesTransactionView(salesTransactionController, scanner);
+
+        
+        ReportView reportView = new ReportView(reportController, scanner);
+        MainView mainView = new MainView(productView, customerView, salesTransactionView, reportView, scanner);
+        mainView.displayMainMenu();
+
     }
     
 }

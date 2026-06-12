@@ -1,5 +1,11 @@
 package Services;
 
-public class ProductService {
+import Repositories.ProductRepository;
 
+public class ProductService {
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 }
