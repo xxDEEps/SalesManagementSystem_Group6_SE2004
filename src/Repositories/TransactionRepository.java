@@ -3,8 +3,8 @@ package Repositories;
 import java.util.ArrayList;
 import java.util.List;
 
-import Model.Transaction;
+import Model.SalesTransaction;
 
 public class TransactionRepository extends AbstractFileRepository implements IRepository {
-    private List<Transaction> transactions = new ArrayList<>();
+    private List<SalesTransaction> transactions = new ArrayList<>();
 }

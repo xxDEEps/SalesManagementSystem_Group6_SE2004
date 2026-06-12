@@ -3,14 +3,14 @@ package Model;
 import java.sql.Date;
 import java.util.List;
 
-public class Transaction {
+public class SalesTransaction {
     private String transactionID;
     private String customerID;
     private Date date;
     private double totalAmount;
     private List<Product> orderItems;
 
-    public Transaction(String transactionID, String customerID, Date date, double totalAmount, List<Product> orderItems) {
+    public SalesTransaction(String transactionID, String customerID, Date date, double totalAmount, List<Product> orderItems) {
         this.transactionID = transactionID;
         this.customerID = customerID;
         this.date = date;
