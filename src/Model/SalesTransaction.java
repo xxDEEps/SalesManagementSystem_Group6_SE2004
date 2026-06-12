@@ -4,26 +4,26 @@ import java.sql.Date;
 import java.util.List;
 
 public class SalesTransaction {
-    private String transactionID;
+    private String salesTransactionID;
     private String customerID;
     private Date date;
     private double totalAmount;
     private List<Product> orderItems;
 
-    public SalesTransaction(String transactionID, String customerID, Date date, double totalAmount, List<Product> orderItems) {
-        this.transactionID = transactionID;
+    public SalesTransaction(String salesTransactionID, String customerID, Date date, double totalAmount, List<Product> orderItems) {
+        this.salesTransactionID = salesTransactionID;
         this.customerID = customerID;
         this.date = date;
         this.totalAmount = totalAmount;
         this.orderItems = orderItems;
     }
 
-    public String getTransactionID() {
-        return transactionID;
+    public String getSalesTransactionID() {
+        return salesTransactionID;
     }
 
-    public void setTransactionID(String transactionID) {
-        this.transactionID = transactionID;
+    public void setSalesTransactionID(String salesTransactionID) {
+        this.salesTransactionID = salesTransactionID;
     }
 
     public String getCustomerID() {
