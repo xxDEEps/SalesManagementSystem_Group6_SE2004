@@ -7,16 +7,18 @@ import Model.SalesTransaction;
 
 public class SalesTransactionRepository extends AbstractFileRepository implements IRepository {
     private List<SalesTransaction> salesTransactionsList = new ArrayList<>();
+    private String filePath = "sales_transactions.bin";
 
     @Override
     public void saveToFile() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveToFile'");
+        super.writeDataToFile(salesTransactionsList, filePath);
     }
 
     @Override
     public void loadFromFile() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'loadFromFile'");
+        Object data = super.readDataFromFile(filePath);
+        if (data != null) {
+            salesTransactionsList = (List<SalesTransaction>) data;
+        }
     }
 }
