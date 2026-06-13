@@ -90,7 +90,7 @@ public class SalesTransactionView {
     }
 
     /**
-     * TÍNH NĂNG 4 (Vế 1): Cập nhật thông tin hóa đơn (Thay đổi số lượng món hàng)
+     * TÍNH NĂNG 4: Cập nhật thông tin hóa đơn (Thay đổi số lượng món hàng)
      */
     private void handleUpdateTransaction() {
         System.out.println("\n--- 4. UPDATE TRANSACTION ---");
@@ -106,7 +106,7 @@ public class SalesTransactionView {
     }
 
     /**
-     * TÍNH NĂNG 4 (Vế 2): Hủy hóa đơn (Hoàn trả lại tồn kho cho sản phẩm)
+     * TÍNH NĂNG 4: Hủy hóa đơn (Hoàn trả lại tồn kho cho sản phẩm)
      */
     private void handleCancelTransaction() {
         System.out.println("\n--- 4. CANCEL TRANSACTION ---");
