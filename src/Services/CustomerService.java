@@ -13,9 +13,9 @@ public class CustomerService {
         return repository.save(customer);
     }
 
-    // 2. Gọi xuống Repository để sửa khách
-    public boolean updateCustomer(String id, String name, String phone, String address) {
-        return repository.update(id, name, phone, address);
+    // 2. Gọi xuống Repository để sửa khách (Đã cập nhật theo Object mới)
+    public boolean updateCustomer(String id, Customer customer) {
+        return repository.update(id, customer);
     }
 
     // 3. Gọi xuống Repository để xóa khách
