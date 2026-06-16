@@ -7,7 +7,7 @@ import Model.SalesTransaction;
 
 public class SalesTransactionRepository extends AbstractFileRepository implements IRepository {
     private List<SalesTransaction> salesTransactionsList = new ArrayList<>();
-    private String filePath = "sales_transactions.bin";
+    private String filePath = "sales_transactions.dat";
 
     @Override
     public void saveToFile() throws Exception {
