@@ -1,8 +1,10 @@
 package View;
 
 import java.util.Scanner;
-
+import java.util.List;
 import Controller.CustomerController;
+import Model.Customer;
+import Model.VIPCustomer;
 
 public class CustomerView {
     private final CustomerController customerController;
@@ -46,52 +48,125 @@ public class CustomerView {
         } while (!choice.equals("0"));
     }
 
+    // 1. Logic Thêm khách hàng (Phân biệt Thường / VIP để tạo đúng đối tượng)
     private void handleAddCustomer() {
         System.out.println("\n--- ADD NEW CUSTOMER ---");
         System.out.print("Is this a VIP Customer? (yes/no): ");
-        String isVip = scanner.nextLine();
+        String isVip = scanner.nextLine().trim();
         
         System.out.print("Enter Customer ID: ");
-        String id = scanner.nextLine();
+        String id = scanner.nextLine().trim();
         System.out.print("Enter Full Name: ");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
         System.out.print("Enter Phone Number: ");
-        String phone = scanner.nextLine();
+        String phone = scanner.nextLine().trim();
         System.out.print("Enter Address: ");
-        String address = scanner.nextLine();
+        String address = scanner.nextLine().trim();
 
-        String discountRate = "0";
+        Customer customer;
         if (isVip.equalsIgnoreCase("yes")) {
             System.out.print("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
-            discountRate = scanner.nextLine();
+            String discountStr = scanner.nextLine().trim();
+            double discountRate = Double.parseDouble(discountStr);
+            // Tạo đúng thực thể VIPCustomer
+            customer = new VIPCustomer(id, name, phone, address, discountRate);
+        } else {
+            // Tạo thực thể Customer thường
+            customer = new Customer(id, name, phone, address);
         }
 
-        
+        // Gọi sang Controller để xử lý cất vào kho dữ liệu
+        if (customerController.handleAdd(customer)) {
+            System.out.println(">> Added customer successfully!");
+        } else {
+            System.out.println(">> Error: Customer ID already exists!");
+        }
     }
 
+    // 2. Logic Cập nhật thông tin (Check xem là khách VIP hay Thường để xử lý đúng đắn)
     private void handleUpdateCustomer() {
         System.out.println("\n--- UPDATE CUSTOMER ---");
         System.out.print("Enter Customer ID to update: ");
-        String id = scanner.nextLine();
-        System.out.print("Enter New Name (leave blank to skip): ");
-        String name = scanner.nextLine();
-        System.out.print("Enter New Phone (leave blank to skip): ");
-        String phone = scanner.nextLine();
-        System.out.print("Enter New Address (leave blank to skip): ");
-        String address = scanner.nextLine();
+        String id = scanner.nextLine().trim();
 
-        
+        // Tìm xem khách hàng có tồn tại trong danh sách hiện hành không
+        List<Customer> currentList = customerController.handleView();
+        Customer existingCustomer = null;
+        for (Customer c : currentList) {
+            if (c.getCustomerID().equalsIgnoreCase(id)) {
+                existingCustomer = c;
+                break;
+            }
+        }
+
+        if (existingCustomer == null) {
+            System.out.println(">> Error: Customer ID not found!");
+            return;
+        }
+
+        // Hỏi thông tin mới (Nếu để trống thì lấy lại thông tin cũ)
+        System.out.print("Enter New Name (leave blank to skip): ");
+        String name = scanner.nextLine().trim();
+        if (name.isEmpty()) name = existingCustomer.getName();
+
+        System.out.print("Enter New Phone (leave blank to skip): ");
+        String phone = scanner.nextLine().trim();
+        if (phone.isEmpty()) phone = existingCustomer.getPhone();
+
+        System.out.print("Enter New Address (leave blank to skip): ");
+        String address = scanner.nextLine().trim();
+        if (address.isEmpty()) address = existingCustomer.getAddress();
+
+        Customer updatedCustomer;
+        // Kiểm tra xem đối tượng cũ vốn dĩ là khách VIP hay khách thường
+        if (existingCustomer instanceof VIPCustomer) {
+            System.out.print("Enter New VIP Discount Rate (leave blank to skip): ");
+            String discountStr = scanner.nextLine().trim();
+            double discountRate;
+            if (discountStr.isEmpty()) {
+                discountRate = ((VIPCustomer) existingCustomer).getDiscountRate();
+            } else {
+                discountRate = Double.parseDouble(discountStr);
+            }
+            // Tạo mới thực thể VIP để giữ/cập nhật thông tin VIP
+            updatedCustomer = new VIPCustomer(id, name, phone, address, discountRate);
+        } else {
+            updatedCustomer = new Customer(id, name, phone, address);
+        }
+
+        // Đẩy nguyên Object mới xuống cho bộ xử lý cập nhật đè lên cũ
+        if (customerController.handleUpdate(id, updatedCustomer)) {
+            System.out.println(">> Customer updated successfully!");
+        } else {
+            System.out.println(">> Update failed!");
+        }
     }
 
+    // 3. Logic Xóa khách hàng (Gọi hàm xóa mềm)
     private void handleRemoveCustomer() {
         System.out.println("\n--- REMOVE CUSTOMER ---");
         System.out.print("Enter Customer ID to remove: ");
-        String id = scanner.nextLine();
+        String id = scanner.nextLine().trim();
 
+        if (customerController.handleDelete(id)) {
+            System.out.println(">> Customer removed successfully (Soft Deleted)!");
+        } else {
+            System.out.println(">> Error: Customer ID not found or already removed!");
+        }
     }
 
+    // 4. Logic Xem tất cả danh sách khách hàng đang hoạt động
     private void handleViewAllCustomers() {
         System.out.println("\n--- CUSTOMER LIST ---");
+        List<Customer> customers = customerController.handleView();
         
+        if (customers.isEmpty()) {
+            System.out.println("No active customers found.");
+        } else {
+            // Quét qua danh sách và gọi hàm xuất thông tin bạn tự viết ở lớp Model
+            for (Customer c : customers) {
+                System.out.println(c.displayCustomerInfo());
+            }
+        }
     }
 }
