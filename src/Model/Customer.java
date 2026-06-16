@@ -1,7 +1,5 @@
 package Model;
 
-package Model;
-
 public class Customer {
     private String customerID;
     private String name;
