@@ -8,9 +8,9 @@ public class SalesTransaction {
     private String customerID;
     private Date date;
     private double totalAmount;
-    private List<Product> orderItems;
+    private List<OrderDetail> orderItems;
 
-    public SalesTransaction(String salesTransactionID, String customerID, Date date, double totalAmount, List<Product> orderItems) {
+    public SalesTransaction(String salesTransactionID, String customerID, Date date, double totalAmount, List<OrderDetail> orderItems) {
         this.salesTransactionID = salesTransactionID;
         this.customerID = customerID;
         this.date = date;
@@ -50,11 +50,11 @@ public class SalesTransaction {
         this.totalAmount = totalAmount;
     }
 
-    public List<Product> getOrderItems() {
+    public List<OrderDetail> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<Product> orderItems) {
+    public void setOrderItems(List<OrderDetail> orderItems) {
         this.orderItems = orderItems;
     }
 
