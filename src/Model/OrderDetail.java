@@ -3,15 +3,15 @@ package Model;
 public class OrderDetail {
     private String productID;
     private int quantity;
-    private double subTotal;
+    private double priceAtPurchase;
 
-    public OrderDetail(String productID, int quantity, double subTotal) {
+    public OrderDetail(String productID, int quantity, double priceAtPurchase) {
         this.productID = productID;
         this.quantity = quantity;
-        this.subTotal = subTotal;
+        this.priceAtPurchase = priceAtPurchase;
     }
 
-    public double calculateSubTotal(double price) {
-        return price * quantity;
+    public double calculateSubTotal() {
+        return priceAtPurchase * quantity;
     }
 }
