@@ -19,5 +19,15 @@ public class VIPCustomer extends Customer {
     public void updateDiscountRate(double discountRate) {
         this.discountRate = discountRate;
     }
+
+    public double getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(double discountRate) {
+        this.discountRate = discountRate;
+    }
+    
+    
     
 }
