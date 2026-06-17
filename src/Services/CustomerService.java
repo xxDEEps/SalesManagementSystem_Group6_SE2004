@@ -6,8 +6,14 @@ import java.util.List;
 
 public class CustomerService {
     // Gọi anh Thủ kho (Repository) ra để chuẩn bị sai vặt
-    private final CustomerRepository repository = new CustomerRepository();
+    private final CustomerRepository repository;
 
+    public CustomerService(CustomerRepository customerRepository) {
+        this.repository = customerRepository;
+    }
+
+    
+    
     // 1. Gọi xuống Repository để thêm khách
     public boolean addCustomer(Customer customer) {
         return repository.save(customer);
