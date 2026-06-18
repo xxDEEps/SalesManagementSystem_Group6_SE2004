@@ -7,27 +7,54 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
 
-    // Khởi tạo Constructor nhận CustomerService theo đúng chuẩn của nhóm bạn
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
-    // Nhận khách hàng từ giao diện và đẩy xuống tầng Service
+    // 1. Validate và thêm khách hàng
     public boolean handleAdd(Customer customer) {
+        // VALIDATE: Kiểm tra dữ liệu trống hoặc sai định dạng
+        if (customer.getCustomerID() == null || customer.getCustomerID().trim().isEmpty()) {
+            System.out.println(">> [Validation Error] Customer ID cannot be empty!");
+            return false;
+        }
+        if (customer.getName() == null || customer.getName().trim().isEmpty()) {
+            System.out.println(">> [Validation Error] Customer Name cannot be empty!");
+            return false;
+        }
+        if (customer.getPhone() == null || !customer.getPhone().matches("\\d{10,11}")) {
+            System.out.println(">> [Validation Error] Phone number must contain 10-11 digits!");
+            return false;
+        }
+        
         return customerService.addCustomer(customer);
     }
 
-    // Nhận thông tin sửa từ giao diện và đẩy xuống tầng Service
-    public boolean handleUpdate(String id, String name, String phone, String address) {
-        return customerService.updateCustomer(id, name, phone, address);
+    // 2. Validate và sửa khách hàng
+    public boolean handleUpdate(String id, Customer updatedCustomer) {
+        // VALIDATE: ID tìm kiếm và dữ liệu mới
+        if (id == null || id.trim().isEmpty()) return false;
+        if (updatedCustomer.getName() == null || updatedCustomer.getName().trim().isEmpty()) {
+            System.out.println(">> [Validation Error] Name cannot be empty!");
+            return false;
+        }
+        if (updatedCustomer.getPhone() == null || !updatedCustomer.getPhone().matches("\\d{10,11}")) {
+            System.out.println(">> [Validation Error] Phone number must contain 10-11 digits!");
+            return false;
+        }
+
+        return customerService.updateCustomer(id, updatedCustomer);
     }
 
-    // Nhận ID cần xóa từ giao diện và đẩy xuống tầng Service
+    // 3. Validate ID trước khi xóa
     public boolean handleDelete(String id) {
+        if (id == null || id.trim().isEmpty()) {
+            return false;
+        }
         return customerService.deleteCustomer(id);
     }
 
-    // Gọi tầng Service lấy danh sách về để ném lên cho giao diện hiển thị
+    // 4. Xem danh sách khách hàng
     public List<Customer> handleView() {
         return customerService.getAllCustomers();
     }

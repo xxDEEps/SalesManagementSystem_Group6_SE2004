@@ -1,20 +1,26 @@
 package Model;
 
-public class Customer {
+import java.io.Serializable;
+
+public class Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String customerID;
     private String name;
     private String phone;
     private String address;
-    private boolean isDeleted = false; // 1. Đã thêm thuộc tính này
+    private boolean isDeleted = false;
 
+    // Hàm khởi tạo đầy đủ tham số
     public Customer(String customerID, String name, String phone, String address) {
         this.customerID = customerID;
         this.name = name;
         this.phone = phone;
         this.address = address;
-        this.isDeleted = false; // 2. Đã thêm gán mặc định trong constructor
+        this.isDeleted = false;
     }
 
+    // Hàm khởi tạo trống
     public Customer() {
     }
 
@@ -36,15 +42,8 @@ public class Customer {
         }
     }
 
-    // 3. Đã thêm cặp hàm Getter/Setter này ở cuối file
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.isDeleted = deleted;
-    }
-
+    // --- ĐÃ SỬA CÁC HÀM GETTER / SETTER CHUẨN XÓA BỎ LỖI UNSUPPORTED ---
+    
     public String getCustomerID() {
         return customerID;
     }
@@ -76,6 +75,12 @@ public class Customer {
     public void setAddress(String address) {
         this.address = address;
     }
-    
-    
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.isDeleted = deleted;
+    }
 }
