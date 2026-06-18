@@ -14,15 +14,15 @@ public class Product {
     String category;
     double price;
     int stockQuantity;
-    boolean isDeleted;
+    boolean isDeleted = false;
 
-    public Product(String productID, String name, String category, double price, int stockQuantity, boolean isDeleted) {
+    public Product(String productID, String name, String category, double price, int stockQuantity) {
         this.productID = productID;
         this.name = name;
         this.category = category;
         this.price = price;
         this.stockQuantity = stockQuantity;
-        this.isDeleted = isDeleted;
+        this.isDeleted = false;
     }
 
     public Product() {
