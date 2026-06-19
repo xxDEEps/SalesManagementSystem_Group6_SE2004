@@ -1,9 +1,10 @@
 package Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
 
-public class SalesTransaction {
+public class SalesTransaction implements Serializable{
     private String salesTransactionID;
     private String customerID;
     private Date date;

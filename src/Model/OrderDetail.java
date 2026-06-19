@@ -1,6 +1,8 @@
 package Model;
 
-public class OrderDetail {
+import java.io.Serializable;
+
+public class OrderDetail implements Serializable{
     private String productID;
     private int quantity;
     private double priceAtPurchase;
