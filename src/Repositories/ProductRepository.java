@@ -7,16 +7,18 @@ import Model.Product;
 
 public class ProductRepository extends AbstractFileRepository implements IRepository {
     private Map<String, Product> productMap = new HashMap<>();
+    private final String filepath = "products.dat";
 
     @Override
     public void saveToFile() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveToFile'");
+        super.writeDataToFile(this.productMap, filepath);
     }
 
     @Override
     public void loadFromFile() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'loadFromFile'");
+        Object data = readDataFromFile(filepath);
+        if(data instanceof Map){
+            this.productMap = (Map<String, Product>) data;
+        }
     }
 }
