@@ -21,4 +21,24 @@ public class ProductRepository extends AbstractFileRepository implements IReposi
             this.productMap = (Map<String, Product>) data;
         }
     }
+
+    public Product findByProductById(String id) {
+        return productMap.get(id);
+    }
+
+    public boolean saveNewProduct(Product product) throws Exception {
+        productMap.put(product.getProductID(), product);
+        saveToFile();
+        return true;
+    }
+
+    public boolean updateProduct(String id, Product product) throws Exception {
+        productMap.put(id, product);
+        saveToFile();
+        return true;
+    }
+
+    public Map<String, Product> findAllProducts() {
+        return this.productMap;
+    }
 }

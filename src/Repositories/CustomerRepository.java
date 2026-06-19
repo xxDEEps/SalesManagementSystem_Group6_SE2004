@@ -30,12 +30,12 @@ public class CustomerRepository extends AbstractFileRepository implements IRepos
     }
 
     // Hàm bổ trợ: Chỉ tìm kiếm thực thể gốc trong Map
-    public Customer findById(String id) {
+    public Customer findByCustomerById(String id) {
         return customerMap.get(id);
     }
 
     // Repo: Lưu thô vào Map và file
-    public boolean save(Customer customer) {
+    public boolean saveNewCustomer(Customer customer) {
         customerMap.put(customer.getCustomerID(), customer);
         try { saveToFile(); } catch (Exception e) { }
         return true;
@@ -49,7 +49,7 @@ public class CustomerRepository extends AbstractFileRepository implements IRepos
     }
 
     // Repo: Trả về toàn bộ dữ liệu thô để Service tự lọc
-    public List<Customer> findAll() {
+    public List<Customer> findAllCustomers() {
         return new ArrayList<>(customerMap.values());
     }
 }
