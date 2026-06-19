@@ -78,5 +78,13 @@ public class Product implements Serializable{
         this.stockQuantity = stockQuantity;
     }
 
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     
 }

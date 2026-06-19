@@ -27,7 +27,7 @@ public class CustomerController {
             return false;
         }
         
-        return customerService.addCustomer(customer);
+        return customerService.addNewCustomer(customer);
     }
 
     // 2. Validate và sửa khách hàng

@@ -17,7 +17,7 @@ public class CustomerService {
     }
 
     // LOGIC 1: Thêm khách hàng (Kiểm tra trùng ID trước khi gọi Repo lưu)
-    public boolean addCustomer(Customer customer) {
+    public boolean addNewCustomer(Customer customer) {
         Customer existing = repository.findByCustomerById(customer.getCustomerID());
         // Nếu đã tồn tại khách hàng và chưa bị xóa mềm thì báo trùng
         if (existing != null && !existing.isDeleted()) {

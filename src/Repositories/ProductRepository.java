@@ -1,6 +1,8 @@
 package Repositories;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import Model.Product;
@@ -25,19 +27,17 @@ public class ProductRepository extends AbstractFileRepository implements IReposi
         return productMap.get(id);
     }
 
-    public boolean saveNewProduct(Product product) throws Exception {
+    public void saveNewProduct(Product product) throws Exception {
         productMap.put(product.getProductID(), product);
         saveToFile();
-        return true;
     }
 
-    public boolean updateProduct(String id, Product product) throws Exception {
+    public void updateProduct(String id, Product product) throws Exception {
         productMap.put(id, product);
         saveToFile();
-        return true;
     }
 
-    public Map<String, Product> findAllProducts() {
-        return this.productMap;
+    public List<Product> findAllProducts() {
+        return new ArrayList<>(this.productMap.values());
     }
 }
