@@ -52,8 +52,7 @@ public class ProductView {
 
     private void handleAddProduct() {
         System.out.println("\n--- ADD NEW PRODUCT ---");
-        System.out.print("Enter Product ID: ");
-        String id = scanner.nextLine();
+        String id = validateProductID("Enter Product ID: ");
         System.out.print("Enter Product Name: ");
         String name = scanner.nextLine();
         System.out.print("Enter Category: ");
@@ -99,5 +98,19 @@ public class ProductView {
         String keyword = scanner.nextLine();
 
     }
-    
+
+    private String validateProductID(String Message) {
+        boolean isValid = false;
+        String ProductID = null;
+        while (!isValid) {
+            System.out.print(Message);
+            ProductID = scanner.nextLine().trim();
+            if (ProductID.isEmpty()) {
+                System.out.println("Product ID cannot be empty.");
+            } else {
+                isValid = true;
+            }
+        }
+        return ProductID;
+    }
 }
