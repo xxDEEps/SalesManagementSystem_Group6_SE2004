@@ -1,5 +1,6 @@
 package View;
 
+import java.util.List;
 import java.util.Scanner;
 
 import Controller.ProductController;
@@ -62,6 +63,8 @@ public class ProductView {
         System.out.print("Enter Stock Quantity: ");
         String stock = scanner.nextLine();
 
+        String resultMsg = productController.handleAddNewProduct(new Model.Product(id, name, category, Double.parseDouble(price), Integer.parseInt(stock)));
+        System.out.println(resultMsg);
     }
 
     private void handleUpdateProduct() {
@@ -77,7 +80,9 @@ public class ProductView {
         System.out.print("Enter New Stock Quantity (leave blank to skip): ");
         String stock = scanner.nextLine();
 
-
+        Model.Product updatedProduct = new Model.Product(id, name, category, Double.parseDouble(price), Integer.parseInt(stock));
+        String resultMsg = productController.handleUpdateProduct(id, updatedProduct);
+        System.out.println(resultMsg);
     }
 
     private void handleRemoveProduct() {
@@ -85,18 +90,34 @@ public class ProductView {
         System.out.print("Enter Product ID to remove: ");
         String id = scanner.nextLine();
 
+        String resultMsg = productController.handleDeleteProduct(id);
+        System.out.println(resultMsg);
     }
 
     private void handleViewAllProducts() {
         System.out.println("\n--- PRODUCT LIST ---");
-
+        List<Model.Product> products = productController.handleGetAllProducts();
+        if (products.isEmpty()) {
+            System.out.println("No products found.");
+        } else {
+            for (Model.Product product : products) {
+                System.out.println(product);
+            }
+        }
     }
 
     private void handleSearchProducts() {
         System.out.println("\n--- SEARCH PRODUCTS ---");
         System.out.print("Enter keyword (Name or Category): ");
         String keyword = scanner.nextLine();
-
+        List<Model.Product> products = productController.handleSearchProductsByNameOrCategory(keyword);
+        if (products.isEmpty()) {
+            System.out.println("No products found matching the keyword.");
+        } else {
+            for (Model.Product product : products) {
+                System.out.println(product);
+            }
+        }
     }
 
     private String validateProductID(String Message) {

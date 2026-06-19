@@ -52,11 +52,12 @@ public class ProductController {
         }
     }
 
-    public String handleGetAllProducts() {
+    public List<Product> handleGetAllProducts() {
         try {
-            return productService.getAllProducts().toString();
+            return productService.getAllProducts();
         } catch (Exception e) {
-            return "Error occurred while retrieving products from file: " + e.getMessage();
+            System.err.println("Error occurred while retrieving products from file: " + e.getMessage());
+            return Collections.emptyList();
         }
     }
 
@@ -64,6 +65,7 @@ public class ProductController {
         try {
             return productService.searchProductsByNameOrCategory(keyword);
         } catch (Exception e) {
+            System.err.println("Error occurred while searching products: " + e.getMessage());
             return Collections.emptyList();
         }
     }
