@@ -32,7 +32,6 @@ public abstract class AbstractFileRepository {
     // Read binary file
     protected Object readDataFromFile(String filePath) throws IOException, ClassNotFoundException {
         String fullPath = getCurrentDirectory() + "\\" + DATA_FOLDER + "\\" + filePath;
-        System.out.println("Reading data from: " + fullPath); // Debugging line
         File file = new File(fullPath);
         if (!file.exists()) {
             return null; 
