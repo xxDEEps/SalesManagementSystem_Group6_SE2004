@@ -53,6 +53,7 @@ public class SalesManagementSystem {
             System.out.println(">> Nạp dữ liệu cũ thành công!");
         } catch (Exception e) {
             System.out.println(">> Chưa có dữ liệu cũ hoặc lỗi đọc file. Hệ thống sẽ khởi tạo mới.");
+            System.out.println(">> Lỗi: " + e.getMessage());
         }
 
         

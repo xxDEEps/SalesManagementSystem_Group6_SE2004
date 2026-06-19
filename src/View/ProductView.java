@@ -101,7 +101,7 @@ public class ProductView {
             System.out.println("No products found.");
         } else {
             for (Model.Product product : products) {
-                System.out.println(product);
+                System.out.println(product.displayProductInfo());
             }
         }
     }
@@ -115,7 +115,7 @@ public class ProductView {
             System.out.println("No products found matching the keyword.");
         } else {
             for (Model.Product product : products) {
-                System.out.println(product);
+                System.out.println(product.displayProductInfo());
             }
         }
     }
