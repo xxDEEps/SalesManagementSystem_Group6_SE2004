@@ -19,6 +19,9 @@ public class SalesTransaction implements Serializable{
         this.orderItems = orderItems;
     }
 
+    public SalesTransaction() {
+    }
+
     public String getSalesTransactionID() {
         return salesTransactionID;
     }

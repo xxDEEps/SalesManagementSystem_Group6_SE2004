@@ -16,4 +16,28 @@ public class OrderDetail implements Serializable{
     public double calculateSubTotal() {
         return priceAtPurchase * quantity;
     }
+
+    public String getProductID() {
+        return productID;
+    }
+
+    public void setProductID(String productID) {
+        this.productID = productID;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPriceAtPurchase() {
+        return priceAtPurchase;
+    }
+
+    public void setPriceAtPurchase(double priceAtPurchase) {
+        this.priceAtPurchase = priceAtPurchase;
+    }
 }

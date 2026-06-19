@@ -21,4 +21,10 @@ public class SalesTransactionRepository extends AbstractFileRepository implement
             salesTransactionsList = (List<SalesTransaction>) data;
         }
     }
+    
+    // Helper method for DataSeeder to write transactions
+    public void writeTransactionsToFile(List<SalesTransaction> transactions) throws Exception {
+        this.salesTransactionsList = transactions;
+        saveToFile();
+    }
 }
