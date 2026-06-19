@@ -18,6 +18,7 @@ import Services.CustomerService;
 import Services.ProductService;
 import Services.ReportService;
 import Services.SalesTransactionService;
+import Utilities.DataSeeder;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -40,6 +41,10 @@ public class SalesManagementSystem {
         ProductRepository productRepo = new ProductRepository();
         CustomerRepository customerRepo = new CustomerRepository();
         SalesTransactionRepository salesTransactionRepo = new SalesTransactionRepository();
+
+        // DataSeeder dataSeeder = new DataSeeder(customerRepo, productRepo, salesTransactionRepo);
+        // dataSeeder.seedAllData();
+
         //cho nay load du lieu tu file
         try {
             productRepo.loadFromFile();
