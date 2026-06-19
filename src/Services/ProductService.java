@@ -23,13 +23,38 @@ public class ProductService {
     }
 
     public boolean updateProduct(String id, Product product) throws Exception {
-        Product existing = productRepository.findByProductById(id);
-        if (existing == null || existing.isDeleted()) {
-            return false;
-        }
-        productRepository.updateProduct(id, product);
-        return true;
+
+    Product existing = productRepository.findByProductById(id);
+
+    // Không tồn tại hoặc đã bị xóa
+    if (existing == null || existing.isDeleted()) {
+        return false;
     }
+
+    // Chỉ cập nhật Name nếu người dùng có nhập
+    if (!product.getName().isBlank()) {
+        existing.setName(product.getName());
+    }
+
+    // Chỉ cập nhật Category nếu người dùng có nhập
+    if (!product.getCategory().isBlank()) {
+        existing.setCategory(product.getCategory());
+    }
+
+    // Chỉ cập nhật Price nếu > 0
+    if (product.getPrice() > 0) {
+        existing.setPrice(product.getPrice());
+    }
+
+    // Chỉ cập nhật Stock nếu >= 0
+    if (product.getStockQuantity() >= 0) {
+        existing.setStockQuantity(product.getStockQuantity());
+    }
+
+    productRepository.updateProduct(existing);
+
+    return true;
+}
 
     public boolean deleteProduct(String id) throws Exception {
         Product existing = productRepository.findByProductById(id);

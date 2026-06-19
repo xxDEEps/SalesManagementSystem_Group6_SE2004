@@ -6,6 +6,7 @@ import java.util.Scanner;
 import Controller.ProductController;
 
 public class ProductView {
+
     private final ProductController productController;
     private final Scanner scanner;
 
@@ -69,19 +70,83 @@ public class ProductView {
 
     private void handleUpdateProduct() {
         System.out.println("\n--- UPDATE PRODUCT ---");
-        System.out.print("Enter Product ID to update: ");
-        String id = scanner.nextLine();
-        System.out.print("Enter New Name (leave blank to skip): ");
-        String name = scanner.nextLine();
-        System.out.print("Enter New Category (leave blank to skip): ");
-        String category = scanner.nextLine();
-        System.out.print("Enter New Price (leave blank to skip): ");
-        String price = scanner.nextLine();
-        System.out.print("Enter New Stock Quantity (leave blank to skip): ");
-        String stock = scanner.nextLine();
 
-        Model.Product updatedProduct = new Model.Product(id, name, category, Double.parseDouble(price), Integer.parseInt(stock));
+        // Nhập Product ID cần cập nhật
+        System.out.print("Enter Product ID to update: ");
+        String id = scanner.nextLine().trim();
+
+        // Nhập tên mới (có thể để trống để giữ nguyên)
+        System.out.print("Enter New Name (leave blank to skip): ");
+        String name = scanner.nextLine().trim();
+
+        // Nhập category mới (có thể để trống để giữ nguyên)
+        System.out.print("Enter New Category (leave blank to skip): ");
+        String category = scanner.nextLine().trim();
+
+        // ================== Validate Price ==================
+        // Mặc định -1 nghĩa là người dùng không muốn cập nhật
+        double price = -1;
+
+        while (true) {
+            System.out.print("Enter New Price (leave blank to skip): ");
+            String input = scanner.nextLine().trim();
+
+            // Người dùng nhấn Enter -> bỏ qua cập nhật Price
+            if (input.isEmpty()) {
+                break;
+            }
+
+            try {
+                price = Double.parseDouble(input);
+
+                // Giá phải lớn hơn 0
+                if (price <= 0) {
+                    System.out.println("Price must be greater than 0.");
+                    continue;
+                }
+
+                break;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid price. Please enter a number.");
+            }
+        }
+
+        // ================== Validate Stock ==================
+        // Mặc định -1 nghĩa là không cập nhật Stock
+        int stock = -1;
+
+        while (true) {
+            System.out.print("Enter New Stock Quantity (leave blank to skip): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                break;
+            }
+
+            try {
+                stock = Integer.parseInt(input);
+
+                // Stock không được âm
+                if (stock < 0) {
+                    System.out.println("Stock quantity cannot be negative.");
+                    continue;
+                }
+
+                break;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid stock quantity. Please enter an integer.");
+            }
+        }
+
+        // Tạo Product mới chứa dữ liệu cập nhật
+        Product updatedProduct = new Product(id, name, category, price, stock);
+
+        // Gửi sang Controller xử lý
         String resultMsg = productController.handleUpdateProduct(id, updatedProduct);
+
+        // Hiển thị kết quả
         System.out.println(resultMsg);
     }
 
