@@ -2,6 +2,7 @@ package Utilities;
 
 import Model.Customer;
 import Model.VIPCustomer;
+import Model.CorporateCustomer;
 import Model.Product;
 import Model.SalesTransaction;
 import Model.OrderDetail;
@@ -62,7 +63,7 @@ public class DataSeeder {
             System.out.println("   Error seeding products: " + e.getMessage());
         }
         
-        System.out.println("   ✓ " + products.length + " products added");
+        System.out.println("   > " + products.length + " products added");
     }
 
     // Seed Customers
@@ -94,14 +95,27 @@ public class DataSeeder {
             customerRepo.saveNewCustomer(vipCustomer);
         }
         
+        // Corporate Customers
+        CorporateCustomer[] corporateCustomers = {
+            new CorporateCustomer("CORP001", "Tech Solutions Inc.", "0910123456", "1000 Tech Park, San Francisco", "Tech Solutions Inc.", "TAX123456", 0.08),
+            new CorporateCustomer("CORP002", "Global Enterprises Ltd.", "0911234567", "2000 Enterprise Boulevard, Boston", "Global Enterprises Ltd.", "TAX234567", 0.10),
+            new CorporateCustomer("CORP003", "Digital Innovations Co.", "0912345678", "3000 Innovation Drive, Seattle", "Digital Innovations Co.", "TAX345678", 0.12),
+            new CorporateCustomer("CORP004", "Future Systems Ltd.", "0913456789", "4000 Future Way, Austin", "Future Systems Ltd.", "TAX456789", 0.15)
+        };
+        
+        for (CorporateCustomer corporateCustomer : corporateCustomers) {
+            customerRepo.saveNewCustomer(corporateCustomer);
+        }
+        
         try {
             customerRepo.saveToFile();
         } catch (Exception e) {
             System.out.println("   Error saving customers: " + e.getMessage());
         }
         
-        System.out.println("   ✓ " + customers.length + " regular customers added");
-        System.out.println("   ✓ " + vipCustomers.length + " VIP customers added");
+        System.out.println("   > " + customers.length + " regular customers added");
+        System.out.println("   > " + vipCustomers.length + " VIP customers added");
+        System.out.println("   > " + corporateCustomers.length + " corporate customers added");
     }
 
     // Seed Sales Transactions
@@ -175,13 +189,46 @@ public class DataSeeder {
         double total9 = (2 * 599.99) + 499.99;
         transactions.add(new SalesTransaction("T009", "V004", Date.valueOf("2024-02-20"), total9, orderItems9));
         
+        // Transaction 10: Corporate Customer Tech Solutions Inc. bulk purchase
+        List<OrderDetail> orderItems10 = new ArrayList<>();
+        orderItems10.add(new OrderDetail("P001", 5, 999.99));   // 5x Laptop
+        orderItems10.add(new OrderDetail("P005", 3, 499.99));   // 3x Monitor
+        orderItems10.add(new OrderDetail("P006", 10, 149.99));  // 10x Keyboard
+        double total10 = (5 * 999.99) + (3 * 499.99) + (10 * 149.99);
+        transactions.add(new SalesTransaction("T010", "CORP001", Date.valueOf("2024-03-01"), total10, orderItems10));
+        
+        // Transaction 11: Corporate Customer Global Enterprises Ltd. purchase
+        List<OrderDetail> orderItems11 = new ArrayList<>();
+        orderItems11.add(new OrderDetail("P002", 8, 1299.99));  // 8x iPhone 15 Pro
+        orderItems11.add(new OrderDetail("P003", 5, 349.99));   // 5x Headphones
+        orderItems11.add(new OrderDetail("P009", 20, 29.99));   // 20x Phone Case
+        double total11 = (8 * 1299.99) + (5 * 349.99) + (20 * 29.99);
+        transactions.add(new SalesTransaction("T011", "CORP002", Date.valueOf("2024-03-05"), total11, orderItems11));
+        
+        // Transaction 12: Corporate Customer Digital Innovations Co. office supplies
+        List<OrderDetail> orderItems12 = new ArrayList<>();
+        orderItems12.add(new OrderDetail("P006", 15, 149.99));  // 15x Keyboard
+        orderItems12.add(new OrderDetail("P007", 25, 49.99));   // 25x Mouse
+        orderItems12.add(new OrderDetail("P008", 50, 19.99));   // 50x USB Cable
+        orderItems12.add(new OrderDetail("P010", 100, 9.99));   // 100x Screen Protector
+        double total12 = (15 * 149.99) + (25 * 49.99) + (50 * 19.99) + (100 * 9.99);
+        transactions.add(new SalesTransaction("T012", "CORP003", Date.valueOf("2024-03-10"), total12, orderItems12));
+        
+        // Transaction 13: Corporate Customer Future Systems Ltd. premium setup
+        List<OrderDetail> orderItems13 = new ArrayList<>();
+        orderItems13.add(new OrderDetail("P001", 3, 999.99));   // 3x Laptop
+        orderItems13.add(new OrderDetail("P004", 4, 599.99));   // 4x iPad Air
+        orderItems13.add(new OrderDetail("P003", 3, 349.99));   // 3x Headphones
+        double total13 = (3 * 999.99) + (4 * 599.99) + (3 * 349.99);
+        transactions.add(new SalesTransaction("T013", "CORP004", Date.valueOf("2024-03-15"), total13, orderItems13));
+        
         try {
             salesTransactionRepo.writeTransactionsToFile(transactions);
         } catch (Exception e) {
             System.out.println("   Error saving transactions: " + e.getMessage());
         }
         
-        System.out.println("   ✓ " + transactions.size() + " sales transactions added");
+        System.out.println("   > " + transactions.size() + " sales transactions added");
     }
 
     // Main method to run seeder standalone
@@ -195,7 +242,7 @@ public class DataSeeder {
         DataSeeder seeder = new DataSeeder(customerRepo, productRepo, salesTransactionRepo);
         seeder.seedAllData();
         
-        System.out.println("✓ All data files have been created successfully!");
+        System.out.println(">> All data files have been created successfully!");
         System.out.println("  - customers.dat");
         System.out.println("  - products.dat");
         System.out.println("  - sales_transactions.dat");

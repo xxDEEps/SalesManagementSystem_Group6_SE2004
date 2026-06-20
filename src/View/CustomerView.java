@@ -5,6 +5,7 @@ import java.util.List;
 import Controller.CustomerController;
 import Model.Customer;
 import Model.VIPCustomer;
+import Model.CorporateCustomer;
 
 public class CustomerView {
     private final CustomerController customerController;
@@ -48,11 +49,15 @@ public class CustomerView {
         } while (!choice.equals("0"));
     }
 
-    // 1. Logic Thêm khách hàng (Phân biệt Thường / VIP để tạo đúng đối tượng)
+    // 1. Logic Thêm khách hàng (Phân biệt Thường / VIP / Corporate để tạo đúng đối tượng)
     private void handleAddCustomer() {
         System.out.println("\n--- ADD NEW CUSTOMER ---");
-        System.out.print("Is this a VIP Customer? (yes/no): ");
-        String isVip = scanner.nextLine().trim();
+        System.out.println("Select Customer Type:");
+        System.out.println("1. Regular Customer");
+        System.out.println("2. VIP Customer");
+        System.out.println("3. Corporate Customer");
+        System.out.print("Choose type (1-3): ");
+        String customerType = scanner.nextLine().trim();
         
         System.out.print("Enter Customer ID: ");
         String id = scanner.nextLine().trim();
@@ -64,15 +69,29 @@ public class CustomerView {
         String address = scanner.nextLine().trim();
 
         Customer customer;
-        if (isVip.equalsIgnoreCase("yes")) {
-            System.out.print("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
-            String discountStr = scanner.nextLine().trim();
-            double discountRate = Double.parseDouble(discountStr);
-            // Tạo đúng thực thể VIPCustomer
-            customer = new VIPCustomer(id, name, phone, address, discountRate);
-        } else {
-            // Tạo thực thể Customer thường
-            customer = new Customer(id, name, phone, address);
+        switch (customerType) {
+            case "2":
+                // VIP Customer
+                System.out.print("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
+                String discountStr = scanner.nextLine().trim();
+                double discountRate = Double.parseDouble(discountStr);
+                customer = new VIPCustomer(id, name, phone, address, discountRate);
+                break;
+            case "3":
+                // Corporate Customer
+                System.out.print("Enter Company Name: ");
+                String companyName = scanner.nextLine().trim();
+                System.out.print("Enter Tax ID: ");
+                String taxID = scanner.nextLine().trim();
+                System.out.print("Enter Negotiated Discount Rate (e.g., 0.05 for 5%): ");
+                String negotiatedDiscountStr = scanner.nextLine().trim();
+                double negotiatedDiscountRate = Double.parseDouble(negotiatedDiscountStr);
+                customer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
+                break;
+            default:
+                // Regular Customer
+                customer = new Customer(id, name, phone, address);
+                break;
         }
 
         // Gọi sang Controller để xử lý cất vào kho dữ liệu
@@ -83,7 +102,7 @@ public class CustomerView {
         }
     }
 
-    // 2. Logic Cập nhật thông tin (Check xem là khách VIP hay Thường để xử lý đúng đắn)
+    // 2. Logic Cập nhật thông tin (Check xem là khách Regular / VIP / Corporate để xử lý đúng đắn)
     private void handleUpdateCustomer() {
         System.out.println("\n--- UPDATE CUSTOMER ---");
         System.out.print("Enter Customer ID to update: ");
@@ -118,7 +137,7 @@ public class CustomerView {
         if (address.isEmpty()) address = existingCustomer.getAddress();
 
         Customer updatedCustomer;
-        // Kiểm tra xem đối tượng cũ vốn dĩ là khách VIP hay khách thường
+        // Kiểm tra xem đối tượng cũ vốn dĩ là khách nào: Regular / VIP / Corporate
         if (existingCustomer instanceof VIPCustomer) {
             System.out.print("Enter New VIP Discount Rate (leave blank to skip): ");
             String discountStr = scanner.nextLine().trim();
@@ -130,7 +149,29 @@ public class CustomerView {
             }
             // Tạo mới thực thể VIP để giữ/cập nhật thông tin VIP
             updatedCustomer = new VIPCustomer(id, name, phone, address, discountRate);
+        } else if (existingCustomer instanceof CorporateCustomer) {
+            System.out.print("Enter New Company Name (leave blank to skip): ");
+            String companyName = scanner.nextLine().trim();
+            if (companyName.isEmpty()) {
+                companyName = ((CorporateCustomer) existingCustomer).getCompanyName();
+            }
+            System.out.print("Enter New Tax ID (leave blank to skip): ");
+            String taxID = scanner.nextLine().trim();
+            if (taxID.isEmpty()) {
+                taxID = ((CorporateCustomer) existingCustomer).getTaxID();
+            }
+            System.out.print("Enter New Negotiated Discount Rate (leave blank to skip): ");
+            String discountStr = scanner.nextLine().trim();
+            double negotiatedDiscountRate;
+            if (discountStr.isEmpty()) {
+                negotiatedDiscountRate = ((CorporateCustomer) existingCustomer).getNegotiatedDiscountRate();
+            } else {
+                negotiatedDiscountRate = Double.parseDouble(discountStr);
+            }
+            // Tạo mới thực thể Corporate để giữ/cập nhật thông tin công ty
+            updatedCustomer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
         } else {
+            // Regular Customer
             updatedCustomer = new Customer(id, name, phone, address);
         }
 
