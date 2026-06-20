@@ -50,9 +50,9 @@ public class SalesManagementSystem {
             productRepo.loadFromFile();
             customerRepo.loadFromFile();
             salesTransactionRepo.loadFromFile();
-            System.out.println(">> Nạp dữ liệu cũ thành công!");
+            System.out.println(">> Load data from file successfully.");
         } catch (Exception e) {
-            System.out.println(">> Chưa có dữ liệu cũ hoặc lỗi đọc file. Hệ thống sẽ khởi tạo mới.");
+            System.out.println(">> Error loading data from file. Starting with empty data.");
             System.out.println(">> Lỗi: " + e.getMessage());
         }
 

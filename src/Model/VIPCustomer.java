@@ -13,7 +13,7 @@ public class VIPCustomer extends Customer {
 
     @Override
     public String displayCustomerInfo() {
-        return super.displayCustomerInfo() + ", Discount Rate: " + discountRate;
+        return super.displayCustomerInfo() + " || Discount Rate: " + discountRate;
     }
 
     public void updateDiscountRate(double discountRate) {

@@ -25,7 +25,7 @@ public class Customer implements Serializable {
     }
 
     public String displayCustomerInfo() {
-        return "Customer ID: " + customerID + ", Name: " + name + ", Phone: " + phone + ", Address: " + address;
+        return "Customer ID: " + customerID + " || Name: " + name + " || Phone: " + phone + " || Address: " + address;
     }
 
     public void updateCustomerInfo(String name, String phone, String address) {
