@@ -14,74 +14,103 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public boolean addNewProduct(Model.Product product) throws Exception {
+    // Add Product
+    public boolean addNewProduct(Product product) throws Exception {
+
         Product existing = productRepository.findByProductById(product.getProductID());
+
         if (existing != null && !existing.isDeleted()) {
             return false;
         }
+
         productRepository.saveNewProduct(product);
         return true;
     }
 
+    // Update Product
     public boolean updateProduct(String id, Product product) throws Exception {
 
         Product existing = productRepository.findByProductById(id);
 
-        // Không tồn tại hoặc đã bị xóa
         if (existing == null || existing.isDeleted()) {
             return false;
         }
 
-        // Chỉ cập nhật Name nếu người dùng có nhập
-        if (!product.getName().isBlank()) {
+        // Update Name
+        if (product.getName() != null && !product.getName().trim().isEmpty()) {
             existing.setName(product.getName());
         }
 
-        // Chỉ cập nhật Category nếu người dùng có nhập
-        if (!product.getCategory().isBlank()) {
+        // Update Category
+        if (product.getCategory() != null && !product.getCategory().trim().isEmpty()) {
             existing.setCategory(product.getCategory());
         }
 
-        // Chỉ cập nhật Price nếu > 0
+        // Update Price
         if (product.getPrice() > 0) {
             existing.setPrice(product.getPrice());
         }
 
-        // Chỉ cập nhật Stock nếu >= 0
+        // Update Stock
         if (product.getStockQuantity() >= 0) {
             existing.setStockQuantity(product.getStockQuantity());
         }
 
-        productRepository.updateProduct(existing);
+        productRepository.updateProduct(id, existing);
 
         return true;
     }
 
+    // Delete Product (Soft Delete)
     public boolean deleteProduct(String id) throws Exception {
+
         Product existing = productRepository.findByProductById(id);
+
         if (existing == null || existing.isDeleted()) {
             return false;
         }
+
         existing.setDeleted(true);
+
         productRepository.updateProduct(id, existing);
+
         return true;
     }
 
+    // View All Product
     public List<Product> getAllProducts() {
-        return productRepository.findAllProducts();
-    }
 
-    public List<Product> searchProductsByNameOrCategory(String keyword) {
-        List<Product> allProducts = productRepository.findAllProducts();
-        List<Product> matchedProducts = new ArrayList<>();
-        String lowerKeyword = keyword.toLowerCase();
+        List<Product> products = new ArrayList<>();
 
-        for (Product p : allProducts) {
-            if (!p.isDeleted() && (p.getName().toLowerCase().contains(lowerKeyword)
-                    || p.getCategory().toLowerCase().contains(lowerKeyword))) {
-                matchedProducts.add(p);
+        for (Product p : productRepository.findAllProducts()) {
+            if (!p.isDeleted()) {
+                products.add(p);
             }
         }
-        return matchedProducts;
+
+        return products;
+    }
+
+    // Search Product
+    public List<Product> searchProductsByNameOrCategory(String keyword) {
+
+        List<Product> result = new ArrayList<>();
+
+        keyword = keyword.toLowerCase();
+
+        for (Product p : productRepository.findAllProducts()) {
+
+            if (p.isDeleted()) {
+                continue;
+            }
+
+            if (p.getName().toLowerCase().contains(keyword)
+                    || p.getCategory().toLowerCase().contains(keyword)) {
+
+                result.add(p);
+            }
+        }
+
+        return result;
     }
 }

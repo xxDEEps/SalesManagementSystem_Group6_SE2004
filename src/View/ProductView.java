@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import Controller.ProductController;
+import Model.Product;
 
 public class ProductView {
 
@@ -17,89 +18,103 @@ public class ProductView {
 
     public void displayMenu() {
         String choice;
+
         do {
-            System.out.println("\n--- PRODUCT MANAGEMENT ---");
+            System.out.println("\n========== PRODUCT MANAGEMENT ==========");
             System.out.println("1. Add New Product");
             System.out.println("2. Update Product");
             System.out.println("3. Remove Product");
             System.out.println("4. View All Products");
             System.out.println("5. Search Products");
-            System.out.println("0. Back to Main Menu");
-            System.out.print("Choose an option: ");
+            System.out.println("0. Back");
+            System.out.print("Choose: ");
+
             choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
                     handleAddProduct();
                     break;
+
                 case "2":
                     handleUpdateProduct();
                     break;
+
                 case "3":
                     handleRemoveProduct();
                     break;
+
                 case "4":
                     handleViewAllProducts();
                     break;
+
                 case "5":
                     handleSearchProducts();
                     break;
+
                 case "0":
                     break;
+
                 default:
-                    System.out.println("Invalid option!");
+                    System.out.println("Invalid choice!");
             }
+
         } while (!choice.equals("0"));
     }
 
-    private void handleAddProduct() {
-        System.out.println("\n--- ADD NEW PRODUCT ---");
-        String id = validateProductID("Enter Product ID: ");
-        System.out.print("Enter Product Name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter Category: ");
-        String category = scanner.nextLine();
-        System.out.print("Enter Price: ");
-        String price = scanner.nextLine();
-        System.out.print("Enter Stock Quantity: ");
-        String stock = scanner.nextLine();
+    // ================= ADD PRODUCT =================
 
-        String resultMsg = productController.handleAddNewProduct(new Model.Product(id, name, category, Double.parseDouble(price), Integer.parseInt(stock)));
-        System.out.println(resultMsg);
+    private void handleAddProduct() {
+
+        System.out.println("\n===== ADD PRODUCT =====");
+
+        String id = validateProductID("Enter Product ID: ");
+
+        String name = validateName("Enter Product Name: ");
+
+        String category = validateCategory("Enter Category: ");
+
+        double price = validatePrice("Enter Price: ");
+
+        int stock = validateStock("Enter Stock Quantity: ");
+
+        Product product = new Product(id, name, category, price, stock);
+
+        String result = productController.handleAddNewProduct(product);
+
+        System.out.println(result);
     }
 
+    // ================= UPDATE PRODUCT =================
+
     private void handleUpdateProduct() {
-        System.out.println("\n--- UPDATE PRODUCT ---");
 
-        // Nhập Product ID cần cập nhật
-        System.out.print("Enter Product ID to update: ");
-        String id = scanner.nextLine().trim();
+        System.out.println("\n===== UPDATE PRODUCT =====");
 
-        // Nhập tên mới (có thể để trống để giữ nguyên)
+        String id = validateProductID("Enter Product ID: ");
+
         System.out.print("Enter New Name (leave blank to skip): ");
         String name = scanner.nextLine().trim();
 
-        // Nhập category mới (có thể để trống để giữ nguyên)
         System.out.print("Enter New Category (leave blank to skip): ");
         String category = scanner.nextLine().trim();
 
-        // ================== Validate Price ==================
-        // Mặc định -1 nghĩa là người dùng không muốn cập nhật
         double price = -1;
 
         while (true) {
+
             System.out.print("Enter New Price (leave blank to skip): ");
+
             String input = scanner.nextLine().trim();
 
-            // Người dùng nhấn Enter -> bỏ qua cập nhật Price
             if (input.isEmpty()) {
                 break;
             }
 
             try {
+
                 price = Double.parseDouble(input);
 
-                // Giá phải lớn hơn 0
                 if (price <= 0) {
                     System.out.println("Price must be greater than 0.");
                     continue;
@@ -108,16 +123,16 @@ public class ProductView {
                 break;
 
             } catch (NumberFormatException e) {
-                System.out.println("Invalid price. Please enter a number.");
+                System.out.println("Invalid price.");
             }
         }
 
-        // ================== Validate Stock ==================
-        // Mặc định -1 nghĩa là không cập nhật Stock
         int stock = -1;
 
         while (true) {
+
             System.out.print("Enter New Stock Quantity (leave blank to skip): ");
+
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
@@ -125,78 +140,204 @@ public class ProductView {
             }
 
             try {
+
                 stock = Integer.parseInt(input);
 
-                // Stock không được âm
                 if (stock < 0) {
-                    System.out.println("Stock quantity cannot be negative.");
+                    System.out.println("Stock cannot be negative.");
                     continue;
                 }
 
                 break;
 
             } catch (NumberFormatException e) {
-                System.out.println("Invalid stock quantity. Please enter an integer.");
+                System.out.println("Invalid stock.");
             }
         }
 
-        // Tạo Product mới chứa dữ liệu cập nhật
         Product updatedProduct = new Product(id, name, category, price, stock);
 
-        // Gửi sang Controller xử lý
-        String resultMsg = productController.handleUpdateProduct(id, updatedProduct);
+        String result = productController.handleUpdateProduct(id, updatedProduct);
 
-        // Hiển thị kết quả
-        System.out.println(resultMsg);
+        System.out.println(result);
     }
+        // ================= REMOVE PRODUCT =================
 
     private void handleRemoveProduct() {
-        System.out.println("\n--- REMOVE PRODUCT ---");
-        System.out.print("Enter Product ID to remove: ");
-        String id = scanner.nextLine();
 
-        String resultMsg = productController.handleDeleteProduct(id);
-        System.out.println(resultMsg);
+        System.out.println("\n===== REMOVE PRODUCT =====");
+
+        String id = validateProductID("Enter Product ID: ");
+
+        String result = productController.handleDeleteProduct(id);
+
+        System.out.println(result);
     }
+
+    // ================= VIEW PRODUCT =================
 
     private void handleViewAllProducts() {
-        System.out.println("\n--- PRODUCT LIST ---");
-        List<Model.Product> products = productController.handleGetAllProducts();
+
+        System.out.println("\n===== PRODUCT LIST =====");
+
+        List<Product> products = productController.handleGetAllProducts();
+
         if (products.isEmpty()) {
             System.out.println("No products found.");
-        } else {
-            for (Model.Product product : products) {
-                System.out.println(product.displayProductInfo());
-            }
+            return;
+        }
+
+        for (Product product : products) {
+            System.out.println(product.displayProductInfo());
         }
     }
+
+    // ================= SEARCH PRODUCT =================
 
     private void handleSearchProducts() {
-        System.out.println("\n--- SEARCH PRODUCTS ---");
-        System.out.print("Enter keyword (Name or Category): ");
-        String keyword = scanner.nextLine();
-        List<Model.Product> products = productController.handleSearchProductsByNameOrCategory(keyword);
+
+        System.out.println("\n===== SEARCH PRODUCT =====");
+
+        System.out.print("Enter keyword: ");
+
+        String keyword = scanner.nextLine().trim();
+
+        List<Product> products =
+                productController.handleSearchProductsByNameOrCategory(keyword);
+
         if (products.isEmpty()) {
-            System.out.println("No products found matching the keyword.");
-        } else {
-            for (Model.Product product : products) {
-                System.out.println(product.displayProductInfo());
+            System.out.println("No matching product found.");
+            return;
+        }
+
+        for (Product product : products) {
+            System.out.println(product.displayProductInfo());
+        }
+    }
+
+    // ================= VALIDATE PRODUCT ID =================
+
+    private String validateProductID(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String id = scanner.nextLine().trim();
+
+            if (id.isEmpty()) {
+                System.out.println("Product ID cannot be empty.");
+                continue;
+            }
+
+            if (!id.matches("[A-Za-z0-9]+")) {
+                System.out.println("Product ID only contains letters and numbers.");
+                continue;
+            }
+
+            return id;
+        }
+    }
+
+    // ================= VALIDATE NAME =================
+
+    private String validateName(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String name = scanner.nextLine().trim();
+
+            if (name.isEmpty()) {
+                System.out.println("Product name cannot be empty.");
+                continue;
+            }
+
+            if (name.length() > 50) {
+                System.out.println("Maximum 50 characters.");
+                continue;
+            }
+
+            return name;
+        }
+    }
+
+    // ================= VALIDATE CATEGORY =================
+
+    private String validateCategory(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String category = scanner.nextLine().trim();
+
+            if (category.isEmpty()) {
+                System.out.println("Category cannot be empty.");
+                continue;
+            }
+
+            if (category.length() > 50) {
+                System.out.println("Maximum 50 characters.");
+                continue;
+            }
+
+            return category;
+        }
+    }
+
+    // ================= VALIDATE PRICE =================
+
+    private double validatePrice(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String input = scanner.nextLine().trim();
+
+            try {
+
+                double price = Double.parseDouble(input);
+
+                if (price <= 0) {
+                    System.out.println("Price must be greater than 0.");
+                    continue;
+                }
+
+                return price;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid price.");
             }
         }
     }
 
-    private String validateProductID(String Message) {
-        boolean isValid = false;
-        String ProductID = null;
-        while (!isValid) {
-            System.out.print(Message);
-            ProductID = scanner.nextLine().trim();
-            if (ProductID.isEmpty()) {
-                System.out.println("Product ID cannot be empty.");
-            } else {
-                isValid = true;
+    // ================= VALIDATE STOCK =================
+
+    private int validateStock(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String input = scanner.nextLine().trim();
+
+            try {
+
+                int stock = Integer.parseInt(input);
+
+                if (stock < 0) {
+                    System.out.println("Stock quantity cannot be negative.");
+                    continue;
+                }
+
+                return stock;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid stock quantity.");
             }
         }
-        return ProductID;
     }
 }
