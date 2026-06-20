@@ -42,6 +42,11 @@ public class Customer implements Serializable {
         }
     }
 
+    // Tính giá cuối cùng cho khách hàng thông thường (không có chiết khấu)
+    public double calculateFinalPrice(double originalPrice) {
+        return originalPrice;
+    }
+
     // --- ĐÃ SỬA CÁC HÀM GETTER / SETTER CHUẨN XÓA BỎ LỖI UNSUPPORTED ---
     
     public String getCustomerID() {

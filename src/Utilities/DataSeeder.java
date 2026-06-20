@@ -97,10 +97,10 @@ public class DataSeeder {
         
         // Corporate Customers
         CorporateCustomer[] corporateCustomers = {
-            new CorporateCustomer("CORP001", "Tech Solutions Inc.", "0910123456", "1000 Tech Park, San Francisco", "Tech Solutions Inc.", "TAX123456"),
-            new CorporateCustomer("CORP002", "Global Enterprises Ltd.", "0911234567", "2000 Enterprise Boulevard, Boston", "Global Enterprises Ltd.", "TAX234567"),
-            new CorporateCustomer("CORP003", "Digital Innovations Co.", "0912345678", "3000 Innovation Drive, Seattle", "Digital Innovations Co.", "TAX345678"),
-            new CorporateCustomer("CORP004", "Future Systems Ltd.", "0913456789", "4000 Future Way, Austin", "Future Systems Ltd.", "TAX456789")
+            new CorporateCustomer("CORP001", "Tech Solutions Inc.", "0910123456", "1000 Tech Park, San Francisco", "Tech Solutions Inc.", "TAX123456", 0.08),
+            new CorporateCustomer("CORP002", "Global Enterprises Ltd.", "0911234567", "2000 Enterprise Boulevard, Boston", "Global Enterprises Ltd.", "TAX234567", 0.10),
+            new CorporateCustomer("CORP003", "Digital Innovations Co.", "0912345678", "3000 Innovation Drive, Seattle", "Digital Innovations Co.", "TAX345678", 0.12),
+            new CorporateCustomer("CORP004", "Future Systems Ltd.", "0913456789", "4000 Future Way, Austin", "Future Systems Ltd.", "TAX456789", 0.15)
         };
         
         for (CorporateCustomer corporateCustomer : corporateCustomers) {

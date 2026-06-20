@@ -83,7 +83,10 @@ public class CustomerView {
                 String companyName = scanner.nextLine().trim();
                 System.out.print("Enter Tax ID: ");
                 String taxID = scanner.nextLine().trim();
-                customer = new CorporateCustomer(id, name, phone, address, companyName, taxID);
+                System.out.print("Enter Negotiated Discount Rate (e.g., 0.05 for 5%): ");
+                String negotiatedDiscountStr = scanner.nextLine().trim();
+                double negotiatedDiscountRate = Double.parseDouble(negotiatedDiscountStr);
+                customer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
                 break;
             default:
                 // Regular Customer
@@ -157,8 +160,16 @@ public class CustomerView {
             if (taxID.isEmpty()) {
                 taxID = ((CorporateCustomer) existingCustomer).getTaxID();
             }
+            System.out.print("Enter New Negotiated Discount Rate (leave blank to skip): ");
+            String discountStr = scanner.nextLine().trim();
+            double negotiatedDiscountRate;
+            if (discountStr.isEmpty()) {
+                negotiatedDiscountRate = ((CorporateCustomer) existingCustomer).getNegotiatedDiscountRate();
+            } else {
+                negotiatedDiscountRate = Double.parseDouble(discountStr);
+            }
             // Tạo mới thực thể Corporate để giữ/cập nhật thông tin công ty
-            updatedCustomer = new CorporateCustomer(id, name, phone, address, companyName, taxID);
+            updatedCustomer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
         } else {
             // Regular Customer
             updatedCustomer = new Customer(id, name, phone, address);
