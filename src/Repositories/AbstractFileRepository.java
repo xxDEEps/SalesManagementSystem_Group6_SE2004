@@ -4,7 +4,7 @@ import java.io.*;
 
 public abstract class AbstractFileRepository {
     
-    private static final String DATA_FOLDER = "SalesManagementSystem_Group6_SE2004\\Data";
+    private static final String DATA_FOLDER = "src\\Data";
     
     private String getCurrentDirectory() {
         return System.getProperty("user.dir");
