@@ -28,6 +28,10 @@ public class Customer implements Serializable {
         return "Customer ID: " + customerID + " || Name: " + name + " || Phone: " + phone + " || Address: " + address;
     }
 
+    public double calculateFinalPrice(double originalPrice) {
+        return originalPrice;
+    }
+    
     public void updateCustomerInfo(String name, String phone, String address) {
         this.name = name;
         this.phone = phone;
@@ -40,11 +44,6 @@ public class Customer implements Serializable {
         } else {
             System.out.println("Customer with ID " + customerID + " not found.");
         }
-    }
-
-    // Tính giá cuối cùng cho khách hàng thông thường (không có chiết khấu)
-    public double calculateFinalPrice(double originalPrice) {
-        return originalPrice;
     }
 
     // --- ĐÃ SỬA CÁC HÀM GETTER / SETTER CHUẨN XÓA BỎ LỖI UNSUPPORTED ---
