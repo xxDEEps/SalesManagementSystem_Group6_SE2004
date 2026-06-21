@@ -16,7 +16,9 @@ public class CorporateCustomer extends Customer {
 
     @Override
     public String displayCustomerInfo() {
-        return super.displayCustomerInfo() + " || Company Name: " + companyName + " || Tax ID: " + taxID + " || Negotiated Discount Rate: " + negotiatedDiscountRate;
+        return super.displayCustomerInfo() + " || Company Name: " + companyName 
+                                           + " || Tax ID: " + taxID 
+                                           + " || Negotiated Discount Rate: " + negotiatedDiscountRate;
     }
 
     @Override
