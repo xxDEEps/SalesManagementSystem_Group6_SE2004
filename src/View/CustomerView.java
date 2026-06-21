@@ -5,7 +5,6 @@ import java.util.List;
 import Controller.CustomerController;
 import Model.Customer;
 import Model.VIPCustomer;
-import Model.CorporateCustomer;
 
 public class CustomerView {
     private final CustomerController customerController;
@@ -49,52 +48,29 @@ public class CustomerView {
         } while (!choice.equals("0"));
     }
 
-    // 1. Logic Thêm khách hàng (Phân biệt Thường / VIP / Corporate để tạo đúng đối tượng)
+    // ================= ADD CUSTOMER =================
+
     private void handleAddCustomer() {
         System.out.println("\n--- ADD NEW CUSTOMER ---");
         System.out.println("Select Customer Type:");
         System.out.println("1. Regular Customer");
         System.out.println("2. VIP Customer");
-        System.out.println("3. Corporate Customer");
-        System.out.print("Choose type (1-3): ");
-        String customerType = scanner.nextLine().trim();
-        
-        System.out.print("Enter Customer ID: ");
-        String id = scanner.nextLine().trim();
-        System.out.print("Enter Full Name: ");
-        String name = scanner.nextLine().trim();
-        System.out.print("Enter Phone Number: ");
-        String phone = scanner.nextLine().trim();
-        System.out.print("Enter Address: ");
-        String address = scanner.nextLine().trim();
+
+        String customerType = validateCustomerType("Choose type (1-2): ");
+
+        String id      = validateCustomerID("Enter Customer ID: ");
+        String name    = validateName("Enter Full Name: ");
+        String phone   = validatePhone("Enter Phone Number: ");
+        String address = validateAddress("Enter Address: ");
 
         Customer customer;
-        switch (customerType) {
-            case "2":
-                // VIP Customer
-                System.out.print("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
-                String discountStr = scanner.nextLine().trim();
-                double discountRate = Double.parseDouble(discountStr);
-                customer = new VIPCustomer(id, name, phone, address, discountRate);
-                break;
-            case "3":
-                // Corporate Customer
-                System.out.print("Enter Company Name: ");
-                String companyName = scanner.nextLine().trim();
-                System.out.print("Enter Tax ID: ");
-                String taxID = scanner.nextLine().trim();
-                System.out.print("Enter Negotiated Discount Rate (e.g., 0.05 for 5%): ");
-                String negotiatedDiscountStr = scanner.nextLine().trim();
-                double negotiatedDiscountRate = Double.parseDouble(negotiatedDiscountStr);
-                customer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
-                break;
-            default:
-                // Regular Customer
-                customer = new Customer(id, name, phone, address);
-                break;
+        if (customerType.equals("2")) {
+            double discountRate = validateDiscountRate("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
+            customer = new VIPCustomer(id, name, phone, address, discountRate);
+        } else {
+            customer = new Customer(id, name, phone, address);
         }
 
-        // Gọi sang Controller để xử lý cất vào kho dữ liệu
         if (customerController.handleAdd(customer)) {
             System.out.println(">> Added customer successfully!");
         } else {
@@ -102,13 +78,13 @@ public class CustomerView {
         }
     }
 
-    // 2. Logic Cập nhật thông tin (Check xem là khách Regular / VIP / Corporate để xử lý đúng đắn)
+    // ================= UPDATE CUSTOMER =================
+
     private void handleUpdateCustomer() {
         System.out.println("\n--- UPDATE CUSTOMER ---");
-        System.out.print("Enter Customer ID to update: ");
-        String id = scanner.nextLine().trim();
 
-        // Tìm xem khách hàng có tồn tại trong danh sách hiện hành không
+        String id = validateCustomerID("Enter Customer ID to update: ");
+
         List<Customer> currentList = customerController.handleView();
         Customer existingCustomer = null;
         for (Customer c : currentList) {
@@ -123,59 +99,56 @@ public class CustomerView {
             return;
         }
 
-        // Hỏi thông tin mới (Nếu để trống thì lấy lại thông tin cũ)
-        System.out.print("Enter New Name (leave blank to skip): ");
-        String name = scanner.nextLine().trim();
-        if (name.isEmpty()) name = existingCustomer.getName();
+        // Name
+        String name;
+        while (true) {
+            System.out.print("Enter New Name (leave blank to skip): ");
+            name = scanner.nextLine().trim();
+            if (name.isEmpty()) { name = existingCustomer.getName(); break; }
+            if (name.length() > 50) { System.out.println("Name must not exceed 50 characters."); continue; }
+            break;
+        }
 
-        System.out.print("Enter New Phone (leave blank to skip): ");
-        String phone = scanner.nextLine().trim();
-        if (phone.isEmpty()) phone = existingCustomer.getPhone();
+        // Phone
+        String phone;
+        while (true) {
+            System.out.print("Enter New Phone (leave blank to skip): ");
+            phone = scanner.nextLine().trim();
+            if (phone.isEmpty()) { phone = existingCustomer.getPhone(); break; }
+            if (!phone.matches("0[0-9]{9}")) { System.out.println("Phone must start with 0 and have exactly 10 digits."); continue; }
+            break;
+        }
 
-        System.out.print("Enter New Address (leave blank to skip): ");
-        String address = scanner.nextLine().trim();
-        if (address.isEmpty()) address = existingCustomer.getAddress();
+        // Address
+        String address;
+        while (true) {
+            System.out.print("Enter New Address (leave blank to skip): ");
+            address = scanner.nextLine().trim();
+            if (address.isEmpty()) { address = existingCustomer.getAddress(); break; }
+            if (address.length() > 100) { System.out.println("Address must not exceed 100 characters."); continue; }
+            break;
+        }
 
         Customer updatedCustomer;
-        // Kiểm tra xem đối tượng cũ vốn dĩ là khách nào: Regular / VIP / Corporate
         if (existingCustomer instanceof VIPCustomer) {
-            System.out.print("Enter New VIP Discount Rate (leave blank to skip): ");
-            String discountStr = scanner.nextLine().trim();
             double discountRate;
-            if (discountStr.isEmpty()) {
-                discountRate = ((VIPCustomer) existingCustomer).getDiscountRate();
-            } else {
-                discountRate = Double.parseDouble(discountStr);
+            while (true) {
+                System.out.print("Enter New VIP Discount Rate (leave blank to skip): ");
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) { discountRate = ((VIPCustomer) existingCustomer).getDiscountRate(); break; }
+                try {
+                    discountRate = Double.parseDouble(input);
+                    if (discountRate < 0 || discountRate > 1) { System.out.println("Discount rate must be between 0 and 1."); continue; }
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid discount rate.");
+                }
             }
-            // Tạo mới thực thể VIP để giữ/cập nhật thông tin VIP
             updatedCustomer = new VIPCustomer(id, name, phone, address, discountRate);
-        } else if (existingCustomer instanceof CorporateCustomer) {
-            System.out.print("Enter New Company Name (leave blank to skip): ");
-            String companyName = scanner.nextLine().trim();
-            if (companyName.isEmpty()) {
-                companyName = ((CorporateCustomer) existingCustomer).getCompanyName();
-            }
-            System.out.print("Enter New Tax ID (leave blank to skip): ");
-            String taxID = scanner.nextLine().trim();
-            if (taxID.isEmpty()) {
-                taxID = ((CorporateCustomer) existingCustomer).getTaxID();
-            }
-            System.out.print("Enter New Negotiated Discount Rate (leave blank to skip): ");
-            String discountStr = scanner.nextLine().trim();
-            double negotiatedDiscountRate;
-            if (discountStr.isEmpty()) {
-                negotiatedDiscountRate = ((CorporateCustomer) existingCustomer).getNegotiatedDiscountRate();
-            } else {
-                negotiatedDiscountRate = Double.parseDouble(discountStr);
-            }
-            // Tạo mới thực thể Corporate để giữ/cập nhật thông tin công ty
-            updatedCustomer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
         } else {
-            // Regular Customer
             updatedCustomer = new Customer(id, name, phone, address);
         }
 
-        // Đẩy nguyên Object mới xuống cho bộ xử lý cập nhật đè lên cũ
         if (customerController.handleUpdate(id, updatedCustomer)) {
             System.out.println(">> Customer updated successfully!");
         } else {
@@ -183,11 +156,12 @@ public class CustomerView {
         }
     }
 
-    // 3. Logic Xóa khách hàng (Gọi hàm xóa mềm)
+    // ================= REMOVE CUSTOMER =================
+
     private void handleRemoveCustomer() {
         System.out.println("\n--- REMOVE CUSTOMER ---");
-        System.out.print("Enter Customer ID to remove: ");
-        String id = scanner.nextLine().trim();
+
+        String id = validateCustomerID("Enter Customer ID to remove: ");
 
         if (customerController.handleDelete(id)) {
             System.out.println(">> Customer removed successfully (Soft Deleted)!");
@@ -196,17 +170,93 @@ public class CustomerView {
         }
     }
 
-    // 4. Logic Xem tất cả danh sách khách hàng đang hoạt động
+    // ================= VIEW ALL CUSTOMERS =================
+
     private void handleViewAllCustomers() {
         System.out.println("\n--- CUSTOMER LIST ---");
         List<Customer> customers = customerController.handleView();
-        
+
         if (customers.isEmpty()) {
             System.out.println("No active customers found.");
         } else {
-            // Quét qua danh sách và gọi hàm xuất thông tin bạn tự viết ở lớp Model
             for (Customer c : customers) {
                 System.out.println(c.displayCustomerInfo());
+            }
+        }
+    }
+
+    // ================= VALIDATE CUSTOMER TYPE =================
+
+    private String validateCustomerType(String message) {
+        while (true) {
+            System.out.print(message);
+            String type = scanner.nextLine().trim();
+            if (type.equals("1") || type.equals("2")) return type;
+            System.out.println("Please enter 1 or 2.");
+        }
+    }
+
+    // ================= VALIDATE CUSTOMER ID =================
+
+    private String validateCustomerID(String message) {
+        while (true) {
+            System.out.print(message);
+            String id = scanner.nextLine().trim();
+            if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
+            if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
+            return id;
+        }
+    }
+
+    // ================= VALIDATE NAME =================
+
+    private String validateName(String message) {
+        while (true) {
+            System.out.print(message);
+            String name = scanner.nextLine().trim();
+            if (name.isEmpty()) { System.out.println("Name cannot be empty."); continue; }
+            if (name.length() > 50) { System.out.println("Name must not exceed 50 characters."); continue; }
+            return name;
+        }
+    }
+
+    // ================= VALIDATE PHONE =================
+
+    private String validatePhone(String message) {
+        while (true) {
+            System.out.print(message);
+            String phone = scanner.nextLine().trim();
+            if (phone.isEmpty()) { System.out.println("Phone number cannot be empty."); continue; }
+            if (!phone.matches("0[0-9]{9}")) { System.out.println("Phone must start with 0 and have exactly 10 digits."); continue; }
+            return phone;
+        }
+    }
+
+    // ================= VALIDATE ADDRESS =================
+
+    private String validateAddress(String message) {
+        while (true) {
+            System.out.print(message);
+            String address = scanner.nextLine().trim();
+            if (address.isEmpty()) { System.out.println("Address cannot be empty."); continue; }
+            if (address.length() > 100) { System.out.println("Address must not exceed 100 characters."); continue; }
+            return address;
+        }
+    }
+
+    // ================= VALIDATE DISCOUNT RATE =================
+
+    private double validateDiscountRate(String message) {
+        while (true) {
+            System.out.print(message);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) { System.out.println("Discount rate cannot be empty."); continue; }
+            try {
+                double rate = Double.parseDouble(input);
+                if (rate < 0 || rate > 1) { System.out.println("Discount rate must be between 0 and 1."); continue; }
+                return rate;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid discount rate. Please enter a number (e.g., 0.1).");
             }
         }
     }
