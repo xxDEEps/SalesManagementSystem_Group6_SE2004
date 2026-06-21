@@ -19,6 +19,14 @@ public class CorporateCustomer extends Customer {
         return super.displayCustomerInfo() + " || Company Name: " + companyName + " || Tax ID: " + taxID + " || Negotiated Discount Rate: " + negotiatedDiscountRate;
     }
 
+    @Override
+    public double calculateFinalPrice(double originalPrice) {
+        if (originalPrice > 500) {
+            return originalPrice * (1 - negotiatedDiscountRate);
+        }
+        return originalPrice;
+    }
+    
     public void updateCompanyInfo(String companyName, String taxID) {
         this.companyName = companyName;
         this.taxID = taxID;
@@ -47,15 +55,4 @@ public class CorporateCustomer extends Customer {
     public void setNegotiatedDiscountRate(double negotiatedDiscountRate) {
         this.negotiatedDiscountRate = negotiatedDiscountRate;
     }
-
-    // Override: Tính giá cuối cùng với chiết khấu thương lượng cho khách hàng doanh nghiệp
-    @Override
-    public double calculateFinalPrice(double originalPrice) {
-        // Nếu hoá đơn trên 500 đô thì áp dụng chiết khấu thương lượng, ngược lại không có chiết khấu
-        if (originalPrice > 500) {
-            return originalPrice * (1 - negotiatedDiscountRate);
-        }
-        return originalPrice;
-    }
-
 }

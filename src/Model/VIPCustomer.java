@@ -16,6 +16,11 @@ public class VIPCustomer extends Customer {
         return super.displayCustomerInfo() + " || Discount Rate: " + discountRate;
     }
 
+    @Override
+    public double calculateFinalPrice(double originalPrice) {
+        return originalPrice * (1 - discountRate);
+    }
+    
     public void updateDiscountRate(double discountRate) {
         this.discountRate = discountRate;
     }
@@ -27,13 +32,4 @@ public class VIPCustomer extends Customer {
     public void setDiscountRate(double discountRate) {
         this.discountRate = discountRate;
     }
-
-    // Override: Tính giá cuối cùng với chiết khấu VIP
-    @Override
-    public double calculateFinalPrice(double originalPrice) {
-        // Công thức: Giá gốc - (Giá gốc * Tỷ lệ chiết khấu)
-        // Hoặc: Giá gốc * (1 - Tỷ lệ chiết khấu)
-        return originalPrice * (1 - discountRate);
-    }
-    
 }
