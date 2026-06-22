@@ -95,8 +95,9 @@ public class Customer implements Serializable {
     }
 
     public String getBillingInfo() {
-        return this.name + " (ID: " + this.customerID 
+        return this.name + " (ID: " + this.customerID + ")"
         + "\nPhone: " + this.phone 
-        + "\nAddress: " + this.address;
+        + "\nAddress: " + this.address
+        + "\n---";
     }
 }

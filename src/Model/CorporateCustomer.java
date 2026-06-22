@@ -69,6 +69,7 @@ public class CorporateCustomer extends Customer {
         return super.getBillingInfo() 
         + "\nCompany Name: " + companyName 
         + "\nTax ID: " + taxID
-        + "\nNegotiated Discount Rate: " + negotiatedDiscountRate;
+        + "\nNegotiated Discount Rate: " + negotiatedDiscountRate
+        + "\n---";
     }
 }

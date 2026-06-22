@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import Controller.SalesTransactionController;
+import Model.Customer;
 import Model.OrderDetail;
 import Model.Product;
 import Model.SalesTransaction;
@@ -61,7 +62,8 @@ public class SalesTransactionView {
                 System.out.println("Customer does not exist. Please try again. (Or type 'cancel' to return to menu)");
             }
         }
-
+        Customer customer = salesTransactionController.getCustomerById(customerId);
+        System.out.println("Creating transaction for customer: " + customer.getName() + " (ID: " + customer.getCustomerID() + ")");
 
         //CHECK PRODUCT
         System.out.println("\n--- ADD PRODUCTS TO TRANSACTION ---");
@@ -78,7 +80,8 @@ public class SalesTransactionView {
                 System.out.println("Returning to menu...");
                 return;
             }
-
+            Product product = salesTransactionController.checkForExistingProduct(productId);
+            System.out.println("Selected Product: " + product.getName() + " | Price: $" + product.getPrice() + " | Stock: " + product.getStockQuantity());
             int quantity = validateQuantityInput(productId);
             if (quantity == -1) {
                 return; 
@@ -92,7 +95,8 @@ public class SalesTransactionView {
             OrderDetail orderDetail = new OrderDetail(productId, quantity, priceAtPurchase);
             orderDetails.add(orderDetail);
             System.out.println("Product added successfully to cart.");
-            System.out.print("Current Cart: ");
+            System.out.println("Current Cart: ");
+            System.out.println("====================================");
             displayCurrentCart(orderDetails);
         }
 
@@ -100,28 +104,33 @@ public class SalesTransactionView {
             System.out.println("Notification: Transaction canceled. Cart is empty.");
             return;
         }
-        System.out.println("Calculating total amount...");
         System.out.println("Bill details:");
+        System.out.println(customer.getBillingInfo());
         displayCurrentCart(orderDetails);
-        double totalAmount = salesTransactionController.calculateTotalAmount(customerId, orderDetails);
+        double totalAmount = Math.round(salesTransactionController.calculateTotalAmount(customerId, orderDetails) * 100.0) / 100.0;
         System.out.println("Total Amount: $" + totalAmount);
         
         //CONFIRM TRANSACTION
+        
         while (true) {
             System.out.print("1. Confirm Transaction | 2. Edit Quantity | 3. Cancel Transaction \nChoose an option: ");
             String confirmChoice = scanner.nextLine().trim();
-            switch (confirmChoice) {
-                case "1":
-                    salesTransactionController.handleAddSalesTransaction(customerId, orderDetails, totalAmount);
-                    break;
-                case "2":
-                    handleEditQuantity(orderDetails);
-                    break;
-                case "3":
-                    System.out.println("Transaction canceled.");
-                    return;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+            
+            if(confirmChoice.equals("1")){
+                System.out.println(salesTransactionController.handleAddSalesTransaction(customerId, orderDetails, totalAmount));
+                break;
+            }else if(confirmChoice.equals("2")){
+                handleEditQuantity(orderDetails);
+                totalAmount = Math.round(salesTransactionController.calculateTotalAmount(customerId, orderDetails) * 100.0) / 100.0;
+                System.out.println("Updated Bill details:");
+                System.out.println(customer.getBillingInfo());
+                displayCurrentCart(orderDetails);
+                System.out.println("Total Amount: $" + totalAmount);
+            }else if(confirmChoice.equals("3")){
+                System.out.println("Transaction canceled.");
+                return;
+            }else{
+                System.out.println("Invalid option. Please try again.");
             }
         }
     }
@@ -159,7 +168,7 @@ public class SalesTransactionView {
         if (response == null) {
             return null; // Không tồn tại hoặc đã bị xóa
         }
-        return response; // Trả về tên khách hàng nếu tồn tại
+        return response; 
     }
 
     private String validateProductIDInput(){
@@ -171,11 +180,11 @@ public class SalesTransactionView {
         if (productIdInput.equalsIgnoreCase("cancel")) {
             return "cancel"; 
         }
-        String existingProductId = salesTransactionController.checkForExistingProduct(productIdInput).getProductID();
-        if (existingProductId == null) {
-            return "Product with ID " + productIdInput + " does not exist or has been deleted."; 
-        }
-        return existingProductId; 
+        Product existingProduct = salesTransactionController.checkForExistingProduct(productIdInput);
+            if (existingProduct == null) {
+                return null; // Không tồn tại hoặc đã bị xóa
+            }
+        return existingProduct.getProductID(); 
     }
 
     private int validateQuantityInput(String productId) {
@@ -209,9 +218,10 @@ public class SalesTransactionView {
             Product product = salesTransactionController.checkForExistingProduct(detail.getProductID());
             if (product != null) {
                 System.out.println("ID: " + detail.getProductID() + " - " + product.getName()
-                    + "Category: " + product.getCategory()
-                    + "Quantity: " + detail.getQuantity()
-                    + "Price: $" + detail.getPriceAtPurchase());
+                    + "\nCategory: " + product.getCategory()
+                    + "\nPrice: $" + detail.getPriceAtPurchase()
+                    + "\nQuantity: " + detail.getQuantity());
+                System.out.println("-----------------------------------");
             }
         }
     }
@@ -234,7 +244,6 @@ public class SalesTransactionView {
         if (newQuantity != -1) {
             detailToEdit.setQuantity(newQuantity);
             System.out.println("Quantity updated successfully.");
-            displayCurrentCart(orderDetails);
         }
     }
 

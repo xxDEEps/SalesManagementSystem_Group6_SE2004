@@ -44,6 +44,10 @@ public class SalesTransactionController {
         return customer.getCustomerID();
     }
 
+    public Customer getCustomerById(String customerId) {
+        return customerService.getCustomerById(customerId);
+    }
+
     public String checkForSufficientStock(String productId, int quantity) {
         Product product = productService.getProductById(productId);
         if (product != null && product.getStockQuantity() < quantity) {
@@ -68,4 +72,5 @@ public class SalesTransactionController {
     public List<SalesTransaction> handleGetSalesTransactionHistory() {
         return salesTransactionService.getAllSalesTransactions();
     }
+    
 }

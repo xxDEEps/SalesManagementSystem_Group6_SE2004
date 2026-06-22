@@ -38,7 +38,8 @@ public class VIPCustomer extends Customer {
     @Override
     public String getBillingInfo() {
         return super.getBillingInfo() 
-        + "\nDiscount Rate: " + discountRate;
+        + "\nDiscount Rate: " + discountRate
+        + "\n---";
     }
 
 }
