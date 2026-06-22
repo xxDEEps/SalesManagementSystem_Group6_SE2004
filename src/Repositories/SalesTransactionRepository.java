@@ -27,4 +27,13 @@ public class SalesTransactionRepository extends AbstractFileRepository implement
         this.salesTransactionsList = transactions;
         saveToFile();
     }
+
+    public List<SalesTransaction> getSalesTransactionsList() {
+        return salesTransactionsList;
+    }
+
+    public void addSalesTransaction(SalesTransaction transaction) throws Exception {
+        salesTransactionsList.add(transaction);
+        saveToFile();
+    }
 }

@@ -6,11 +6,14 @@ import Repositories.SalesTransactionRepository;
 
 public class SalesTransactionService {
     private final SalesTransactionRepository salesTransactionRepository;
-    private final ProductRepository productRepository;
-    private final CustomerRepository customerRepository;
-    public SalesTransactionService(SalesTransactionRepository salesTransactionRepository, ProductRepository productRepository, CustomerRepository customerRepository) {
+    private final ProductService productService;
+    private final CustomerService customerService;
+
+    public SalesTransactionService(SalesTransactionRepository salesTransactionRepository, ProductService productService, CustomerService customerService) {
         this.salesTransactionRepository = salesTransactionRepository;
-        this.productRepository = productRepository;
-        this.customerRepository = customerRepository;
+        this.productService = productService;
+        this.customerService = customerService;
     }
+
+
 }

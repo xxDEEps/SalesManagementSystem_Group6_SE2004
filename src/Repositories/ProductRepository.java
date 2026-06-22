@@ -45,6 +45,13 @@ public class ProductRepository extends AbstractFileRepository implements IReposi
         saveToFile();
     }
 
+    public void updateAListOfProducts(List<Product> products) throws Exception {
+        for (Product product : products) {
+            productMap.put(product.getProductID(), product);
+        }
+        saveToFile();
+    }
+
     // Lấy tất cả sản phẩm
     public List<Product> findAllProducts() {
         return new ArrayList<>(productMap.values());

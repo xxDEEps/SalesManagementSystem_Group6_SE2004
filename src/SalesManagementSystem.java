@@ -61,13 +61,13 @@ public class SalesManagementSystem {
         CustomerService customerService = new CustomerService(customerRepo);
         
         SalesTransactionService salesTransactionService = new SalesTransactionService(
-            salesTransactionRepo, productRepo, customerRepo
+            salesTransactionRepo, productService, customerService
         );
         ReportService reportService = new ReportService(salesTransactionRepo, productRepo, customerRepo);
         
         ProductController productController = new ProductController(productService);
         CustomerController customerController = new CustomerController(customerService);
-        SalesTransactionController salesTransactionController = new SalesTransactionController(salesTransactionService);
+        SalesTransactionController salesTransactionController = new SalesTransactionController(salesTransactionService, productService, customerService);
         ReportController reportController = new ReportController(reportService);
         
         ProductView productView = new ProductView(productController, scanner);

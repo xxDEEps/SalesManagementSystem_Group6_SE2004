@@ -59,4 +59,13 @@ public class CustomerService {
         }
         return activeCustomers;
     }
+
+    //get by ID 
+    public Customer getCustomerById(String id) {
+        Customer customer = repository.findByCustomerById(id);
+        if (customer != null && !customer.isDeleted()) {
+            return customer;
+        }
+        return null;
+    }
 }

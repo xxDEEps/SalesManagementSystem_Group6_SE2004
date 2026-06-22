@@ -113,4 +113,22 @@ public class ProductService {
 
         return result;
     }
+
+    // Get Product By ID
+    public Product getProductById(String id) {
+        Product product = productRepository.findByProductById(id);
+        if (product == null || product.isDeleted()) {
+            return null;
+        }
+        return product;
+    }
+
+    // Check Stock Availability
+    public boolean isStockAvailable(String productId, int requiredQuantity) {
+        Product product = getProductById(productId);
+        if (product == null) {
+            return false;
+        }
+        return product.getStockQuantity() >= requiredQuantity;
+    }
 }
