@@ -129,21 +129,30 @@ public class DataSeeder {
         orderItems1.add(new OrderDetail("P001", 1, 999.99));   // 1x Laptop
         orderItems1.add(new OrderDetail("P007", 2, 49.99));    // 2x Mouse
         double total1 = 999.99 + (2 * 49.99);
-        transactions.add(new SalesTransaction("T001", "C001", Date.valueOf("2024-01-15"), total1, orderItems1));
+        SalesTransaction txn1 = new SalesTransaction("C001", orderItems1, total1);
+        txn1.setSalesTransactionID("T001");
+        txn1.setDate(Date.valueOf("2024-01-15"));
+        transactions.add(txn1);
         
         // Transaction 2: VIP Customer Lisa Anderson bought iPhone and Headphones
         List<OrderDetail> orderItems2 = new ArrayList<>();
         orderItems2.add(new OrderDetail("P002", 2, 1299.99));  // 2x iPhone 15 Pro
         orderItems2.add(new OrderDetail("P003", 1, 349.99));   // 1x Headphones
         double total2 = (2 * 1299.99) + 349.99;
-        transactions.add(new SalesTransaction("T002", "V001", Date.valueOf("2024-01-18"), total2, orderItems2));
+        SalesTransaction txn2 = new SalesTransaction("V001", orderItems2, total2);
+        txn2.setSalesTransactionID("T002");
+        txn2.setDate(Date.valueOf("2024-01-18"));
+        transactions.add(txn2);
         
         // Transaction 3: Sarah Johnson bought Monitor and Keyboard
         List<OrderDetail> orderItems3 = new ArrayList<>();
         orderItems3.add(new OrderDetail("P005", 1, 499.99));   // 1x Monitor
         orderItems3.add(new OrderDetail("P006", 1, 149.99));   // 1x Keyboard
         double total3 = 499.99 + 149.99;
-        transactions.add(new SalesTransaction("T003", "C002", Date.valueOf("2024-01-20"), total3, orderItems3));
+        SalesTransaction txn3 = new SalesTransaction("C002", orderItems3, total3);
+        txn3.setSalesTransactionID("T003");
+        txn3.setDate(Date.valueOf("2024-01-20"));
+        transactions.add(txn3);
         
         // Transaction 4: VIP Customer James Taylor bought iPad and Accessories
         List<OrderDetail> orderItems4 = new ArrayList<>();
@@ -151,28 +160,40 @@ public class DataSeeder {
         orderItems4.add(new OrderDetail("P009", 3, 29.99));    // 3x Phone Case
         orderItems4.add(new OrderDetail("P010", 2, 9.99));     // 2x Screen Protector
         double total4 = 599.99 + (3 * 29.99) + (2 * 9.99);
-        transactions.add(new SalesTransaction("T004", "V002", Date.valueOf("2024-01-25"), total4, orderItems4));
+        SalesTransaction txn4 = new SalesTransaction("V002", orderItems4, total4);
+        txn4.setSalesTransactionID("T004");
+        txn4.setDate(Date.valueOf("2024-01-25"));
+        transactions.add(txn4);
         
         // Transaction 5: Michael Brown bought USB Cables and Screen Protectors
         List<OrderDetail> orderItems5 = new ArrayList<>();
         orderItems5.add(new OrderDetail("P008", 5, 19.99));    // 5x USB Cable
         orderItems5.add(new OrderDetail("P010", 10, 9.99));    // 10x Screen Protector
         double total5 = (5 * 19.99) + (10 * 9.99);
-        transactions.add(new SalesTransaction("T005", "C003", Date.valueOf("2024-02-01"), total5, orderItems5));
+        SalesTransaction txn5 = new SalesTransaction("C003", orderItems5, total5);
+        txn5.setSalesTransactionID("T005");
+        txn5.setDate(Date.valueOf("2024-02-01"));
+        transactions.add(txn5);
         
         // Transaction 6: VIP Customer Mary Martinez bulk purchase
         List<OrderDetail> orderItems6 = new ArrayList<>();
         orderItems6.add(new OrderDetail("P002", 3, 1299.99));  // 3x iPhone 15 Pro
         orderItems6.add(new OrderDetail("P006", 2, 149.99));   // 2x Keyboard
         double total6 = (3 * 1299.99) + (2 * 149.99);
-        transactions.add(new SalesTransaction("T006", "V003", Date.valueOf("2024-02-05"), total6, orderItems6));
+        SalesTransaction txn6 = new SalesTransaction("V003", orderItems6, total6);
+        txn6.setSalesTransactionID("T006");
+        txn6.setDate(Date.valueOf("2024-02-05"));
+        transactions.add(txn6);
         
         // Transaction 7: Emily Davis small purchase
         List<OrderDetail> orderItems7 = new ArrayList<>();
         orderItems7.add(new OrderDetail("P007", 1, 49.99));    // 1x Mouse
         orderItems7.add(new OrderDetail("P008", 2, 19.99));    // 2x USB Cable
         double total7 = 49.99 + (2 * 19.99);
-        transactions.add(new SalesTransaction("T007", "C004", Date.valueOf("2024-02-10"), total7, orderItems7));
+        SalesTransaction txn7 = new SalesTransaction("C004", orderItems7, total7);
+        txn7.setSalesTransactionID("T007");
+        txn7.setDate(Date.valueOf("2024-02-10"));
+        transactions.add(txn7);
         
         // Transaction 8: Robert Wilson bought multiple products
         List<OrderDetail> orderItems8 = new ArrayList<>();
@@ -180,14 +201,20 @@ public class DataSeeder {
         orderItems8.add(new OrderDetail("P003", 1, 349.99));   // 1x Headphones
         orderItems8.add(new OrderDetail("P009", 1, 29.99));    // 1x Phone Case
         double total8 = 999.99 + 349.99 + 29.99;
-        transactions.add(new SalesTransaction("T008", "C005", Date.valueOf("2024-02-15"), total8, orderItems8));
+        SalesTransaction txn8 = new SalesTransaction("C005", orderItems8, total8);
+        txn8.setSalesTransactionID("T008");
+        txn8.setDate(Date.valueOf("2024-02-15"));
+        transactions.add(txn8);
         
         // Transaction 9: VIP Customer David Lee premium purchase
         List<OrderDetail> orderItems9 = new ArrayList<>();
         orderItems9.add(new OrderDetail("P004", 2, 599.99));   // 2x iPad Air
         orderItems9.add(new OrderDetail("P005", 1, 499.99));   // 1x Monitor
         double total9 = (2 * 599.99) + 499.99;
-        transactions.add(new SalesTransaction("T009", "V004", Date.valueOf("2024-02-20"), total9, orderItems9));
+        SalesTransaction txn9 = new SalesTransaction("V004", orderItems9, total9);
+        txn9.setSalesTransactionID("T009");
+        txn9.setDate(Date.valueOf("2024-02-20"));
+        transactions.add(txn9);
         
         // Transaction 10: Corporate Customer Tech Solutions Inc. bulk purchase
         List<OrderDetail> orderItems10 = new ArrayList<>();
@@ -195,7 +222,10 @@ public class DataSeeder {
         orderItems10.add(new OrderDetail("P005", 3, 499.99));   // 3x Monitor
         orderItems10.add(new OrderDetail("P006", 10, 149.99));  // 10x Keyboard
         double total10 = (5 * 999.99) + (3 * 499.99) + (10 * 149.99);
-        transactions.add(new SalesTransaction("T010", "CORP001", Date.valueOf("2024-03-01"), total10, orderItems10));
+        SalesTransaction txn10 = new SalesTransaction("CORP001", orderItems10, total10);
+        txn10.setSalesTransactionID("T010");
+        txn10.setDate(Date.valueOf("2024-03-01"));
+        transactions.add(txn10);
         
         // Transaction 11: Corporate Customer Global Enterprises Ltd. purchase
         List<OrderDetail> orderItems11 = new ArrayList<>();
@@ -203,7 +233,10 @@ public class DataSeeder {
         orderItems11.add(new OrderDetail("P003", 5, 349.99));   // 5x Headphones
         orderItems11.add(new OrderDetail("P009", 20, 29.99));   // 20x Phone Case
         double total11 = (8 * 1299.99) + (5 * 349.99) + (20 * 29.99);
-        transactions.add(new SalesTransaction("T011", "CORP002", Date.valueOf("2024-03-05"), total11, orderItems11));
+        SalesTransaction txn11 = new SalesTransaction("CORP002", orderItems11, total11);
+        txn11.setSalesTransactionID("T011");
+        txn11.setDate(Date.valueOf("2024-03-05"));
+        transactions.add(txn11);
         
         // Transaction 12: Corporate Customer Digital Innovations Co. office supplies
         List<OrderDetail> orderItems12 = new ArrayList<>();
@@ -212,7 +245,10 @@ public class DataSeeder {
         orderItems12.add(new OrderDetail("P008", 50, 19.99));   // 50x USB Cable
         orderItems12.add(new OrderDetail("P010", 100, 9.99));   // 100x Screen Protector
         double total12 = (15 * 149.99) + (25 * 49.99) + (50 * 19.99) + (100 * 9.99);
-        transactions.add(new SalesTransaction("T012", "CORP003", Date.valueOf("2024-03-10"), total12, orderItems12));
+        SalesTransaction txn12 = new SalesTransaction("CORP003", orderItems12, total12);
+        txn12.setSalesTransactionID("T012");
+        txn12.setDate(Date.valueOf("2024-03-10"));
+        transactions.add(txn12);
         
         // Transaction 13: Corporate Customer Future Systems Ltd. premium setup
         List<OrderDetail> orderItems13 = new ArrayList<>();
@@ -220,7 +256,10 @@ public class DataSeeder {
         orderItems13.add(new OrderDetail("P004", 4, 599.99));   // 4x iPad Air
         orderItems13.add(new OrderDetail("P003", 3, 349.99));   // 3x Headphones
         double total13 = (3 * 999.99) + (4 * 599.99) + (3 * 349.99);
-        transactions.add(new SalesTransaction("T013", "CORP004", Date.valueOf("2024-03-15"), total13, orderItems13));
+        SalesTransaction txn13 = new SalesTransaction("CORP004", orderItems13, total13);
+        txn13.setSalesTransactionID("T013");
+        txn13.setDate(Date.valueOf("2024-03-15"));
+        transactions.add(txn13);
         
         try {
             salesTransactionRepo.writeTransactionsToFile(transactions);
