@@ -114,6 +114,7 @@ public class ProductService {
         return result;
     }
 
+    // FOR SALES TRANSACTION
     // Get Product By ID
     public Product getProductById(String id) {
         Product product = productRepository.findByProductById(id);
@@ -130,5 +131,13 @@ public class ProductService {
             return false;
         }
         return product.getStockQuantity() >= requiredQuantity;
+    }
+
+    public void deductProductStock(String productId, int quantity) throws Exception {
+        Product product = getProductById(productId);
+        if (product != null) {
+            product.UpdateStockQuantity(-quantity);
+            productRepository.updateProduct(productId, product);
+        }
     }
 }

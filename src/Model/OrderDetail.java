@@ -40,4 +40,5 @@ public class OrderDetail implements Serializable{
     public void setPriceAtPurchase(double priceAtPurchase) {
         this.priceAtPurchase = priceAtPurchase;
     }
+
 }

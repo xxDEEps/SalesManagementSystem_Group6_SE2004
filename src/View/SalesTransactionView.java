@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import Controller.SalesTransactionController;
+import Model.OrderDetail;
+import Model.Product;
+import Model.SalesTransaction;
 
 public class SalesTransactionView {
 
@@ -21,9 +24,7 @@ public class SalesTransactionView {
         do {
             System.out.println("\n--- SALES TRANSACTION MANAGEMENT ---");
             System.out.println("1. Create New Sales Transaction");
-            System.out.println("2. Update Existing Transaction");
-            System.out.println("3. Cancel/Remove Transaction");
-            System.out.println("4. View Sales Transaction History");
+            System.out.println("2. View Sales Transaction History");
             System.out.println("0. Back to Main Menu");
             System.out.print("Choose an option: ");
             choice = scanner.nextLine().trim();
@@ -33,12 +34,6 @@ public class SalesTransactionView {
                     handleCreateTransaction();
                     break;
                 case "2":
-                    handleUpdateTransaction();
-                    break;
-                case "3":
-                    handleCancelTransaction();
-                    break;
-                case "4":
                     handleViewTransactionHistory();
                     break;
                 case "0":
@@ -49,87 +44,199 @@ public class SalesTransactionView {
         } while (!choice.equals("0"));
     }
 
-    /**
-     * TÍNH NĂNG 1, 2, 3: Khởi tạo, Thêm sản phẩm và Tính tổng tiền hóa đơn
-     */
     private void handleCreateTransaction() {
-        System.out.println("\n--- 1. CREATE NEW SALES TRANSACTION ---");
-        System.out.print("Enter Transaction ID: ");
-        String transId = scanner.nextLine().trim();
-        System.out.print("Enter Customer ID: ");
-        String cusId = scanner.nextLine().trim();
+        System.out.println("\n--- CREATE NEW SALES TRANSACTION ---");
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        String customerId = null;
 
-        List<String> productIds = new ArrayList<>();
-        List<String> quantities = new ArrayList<>();
+        // CHECK CUSTOMER
 
-        // TÍNH NĂNG 2: Cho phép thêm liên tục sản phẩm vào hóa đơn
-        System.out.println("\n--- 2. ADD PRODUCTS TO TRANSACTION ---");
-        while (true) {
-            System.out.print("Enter Product ID (or type 'done' to finish & calculate total): ");
-            String pId = scanner.nextLine().trim();
-            if (pId.equalsIgnoreCase("done")) {
-                break;
+        while (customerId == null) {
+            customerId = validateCustomerInput();
+            if (customerId != null && customerId.equals("cancel")) {
+                System.out.println("Returning to menu...");
+                return;
             }
-            System.out.print("Enter Quantity for product [" + pId + "]: ");
-            String qty = scanner.nextLine().trim();
-
-            productIds.add(pId);
-            quantities.add(qty);
-            System.out.println("Product added to temporary cart.");
+            if (customerId == null) {
+                System.out.println("Customer does not exist. Please try again. (Or type 'cancel' to return to menu)");
+            }
         }
 
-        if (productIds.isEmpty()) {
+
+        //CHECK PRODUCT
+        System.out.println("\n--- ADD PRODUCTS TO TRANSACTION ---");
+        while (true) {
+           
+            String productId = validateProductIDInput();
+            if (productId == null) {
+                System.out.println("Product does not exist or is deleted. Please try again.");
+                continue;
+            }
+            if (productId.equalsIgnoreCase("done")) {
+                break;
+            }else if (productId.equalsIgnoreCase("cancel")) {
+                System.out.println("Returning to menu...");
+                return;
+            }
+
+            int quantity = validateQuantityInput(productId);
+            if (quantity == -1) {
+                return; 
+            }
+
+            double priceAtPurchase = salesTransactionController.getProductPrice(productId);
+            if (priceAtPurchase == -1) {
+                System.out.println("Error retrieving product price. Please try again.");
+                continue;
+            }
+            OrderDetail orderDetail = new OrderDetail(productId, quantity, priceAtPurchase);
+            orderDetails.add(orderDetail);
+            System.out.println("Product added successfully to cart.");
+            System.out.print("Current Cart: ");
+            displayCurrentCart(orderDetails);
+        }
+
+        if (orderDetails.isEmpty()) {
             System.out.println("Notification: Transaction canceled. Cart is empty.");
             return;
         }
-
-        // TÍNH NĂNG 3: Controller đón nhận dữ liệu, tính tổng tiền (gồm cả chiết khấu VIP nếu có) và in hóa đơn
-        // String response = salesTransactionController.handleCreateSalesTransaction(transId, cusId, productIds, quantities);
-        // System.out.println("\n=== 3. BILL SUMMARY ===");
-        // System.out.println(response);
+        System.out.println("Calculating total amount...");
+        System.out.println("Bill details:");
+        displayCurrentCart(orderDetails);
+        double totalAmount = salesTransactionController.calculateTotalAmount(customerId, orderDetails);
+        System.out.println("Total Amount: $" + totalAmount);
+        
+        //CONFIRM TRANSACTION
+        while (true) {
+            System.out.print("1. Confirm Transaction | 2. Edit Quantity | 3. Cancel Transaction \nChoose an option: ");
+            String confirmChoice = scanner.nextLine().trim();
+            switch (confirmChoice) {
+                case "1":
+                    salesTransactionController.handleAddSalesTransaction(customerId, orderDetails, totalAmount);
+                    break;
+                case "2":
+                    handleEditQuantity(orderDetails);
+                    break;
+                case "3":
+                    System.out.println("Transaction canceled.");
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
     }
-
-    /**
-     * TÍNH NĂNG 4: Cập nhật thông tin hóa đơn (Thay đổi số lượng món hàng)
-     */
-    private void handleUpdateTransaction() {
-        System.out.println("\n--- 4. UPDATE TRANSACTION ---");
-        System.out.print("Enter Transaction ID to update: ");
-        String transId = scanner.nextLine().trim();
-        System.out.print("Enter Product ID to modify quantity: ");
-        String pId = scanner.nextLine().trim();
-        System.out.print("Enter New Quantity: ");
-        String newQty = scanner.nextLine().trim();
-
-        // String response = salesTransactionController.handleUpdateTransactionItem(transId, pId, newQty);
-        // System.out.println("Notification: " + response);
-    }
-
-    /**
-     * TÍNH NĂNG 4: Hủy hóa đơn (Hoàn trả lại tồn kho cho sản phẩm)
-     */
-    private void handleCancelTransaction() {
-        System.out.println("\n--- 4. CANCEL TRANSACTION ---");
-        System.out.print("Enter Transaction ID to cancel: ");
-        String transId = scanner.nextLine().trim();
-
-        System.out.print("Are you sure you want to cancel this transaction? Tồn kho sẽ được hoàn trả. (yes/no): ");
-        String confirm = scanner.nextLine().trim();
-
-        if (confirm.equalsIgnoreCase("yes")) {
-            // String response = salesTransactionController.handleCancelTransaction(transId);
-            // System.out.println("Notification: " + response);
-        } else {
-            System.out.println("Cancel operation aborted.");
+    private void handleViewTransactionHistory() {
+        System.out.println("\n--- TRANSACTION HISTORY ---");
+        List<SalesTransaction> transactions = salesTransactionController.handleGetSalesTransactionHistory();
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found.");
+            return;
+        }
+        // Display transactions in newest to oldest order
+        transactions.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
+        for (SalesTransaction transaction : transactions) {
+            System.out.println("Transaction ID: " + transaction.getSalesTransactionID());
+            System.out.println("Customer ID: " + transaction.getCustomerID());
+            System.out.println("Date: " + transaction.getDate());
+            System.out.println("Total Amount: $" + transaction.getTotalAmount());
+            System.out.println("Order Details:");
+            for (OrderDetail detail : transaction.getOrderItems()) {
+                Product product = salesTransactionController.checkForExistingProduct(detail.getProductID());
+                String productName = (product != null) ? product.getName() : "Unknown Product";
+                System.out.println("- " + productName + " (ID: " + detail.getProductID() + ") | Quantity: " + detail.getQuantity() + " | Price at Purchase: $" + detail.getPriceAtPurchase());
+            }
+            System.out.println("-----------------------------------");
         }
     }
 
-    /**
-     * TÍNH NĂNG 5: Xem lịch sử giao dịch
-     */
-    private void handleViewTransactionHistory() {
-        System.out.println("\n--- 5. VIEW TRANSACTION HISTORY ---");
-        // String response = salesTransactionController.handleGetSalesTransactionHistory();
-        // System.out.println(response);
+    private String validateCustomerInput() {
+        System.out.print("Enter Customer ID: (Or type 'cancel' to return to menu) ");
+        String customerId = scanner.nextLine().trim();
+        if (customerId.equalsIgnoreCase("cancel")) {
+            return "cancel";
+        }
+        String response = salesTransactionController.checkForExistingCustomer(customerId);
+        if (response == null) {
+            return null; // Không tồn tại hoặc đã bị xóa
+        }
+        return response; // Trả về tên khách hàng nếu tồn tại
     }
+
+    private String validateProductIDInput(){
+        System.out.print("Enter Product ID: ('done' to finish; 'cancel' to return to menu) ");
+        String productIdInput = scanner.nextLine().trim();
+        if (productIdInput.equalsIgnoreCase("done")) {
+            return "done"; 
+        }
+        if (productIdInput.equalsIgnoreCase("cancel")) {
+            return "cancel"; 
+        }
+        String existingProductId = salesTransactionController.checkForExistingProduct(productIdInput).getProductID();
+        if (existingProductId == null) {
+            return "Product with ID " + productIdInput + " does not exist or has been deleted."; 
+        }
+        return existingProductId; 
+    }
+
+    private int validateQuantityInput(String productId) {
+        while (true) {
+            System.out.print("Enter Quantity for product [" + productId + "]: \n ");
+            String qtyInput = scanner.nextLine().trim();
+            if (qtyInput.equalsIgnoreCase("cancel")) {
+                System.out.println("Returning to menu...");
+                return -1; 
+            }
+            try {
+                int quantity = Integer.parseInt(qtyInput);
+                if (quantity <= 0) {
+                    System.out.println("Quantity must be greater than zero. Please try again.");
+                    continue;
+                }
+                String stockCheck = salesTransactionController.checkForSufficientStock(productId, quantity);
+                if (stockCheck != null) {
+                    System.out.println(stockCheck);
+                    continue;
+                }
+                return quantity;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a valid integer for quantity.");
+            }
+        }
+    }
+
+    private void displayCurrentCart(List<OrderDetail> orderDetails) {    
+        for (OrderDetail detail : orderDetails) {
+            Product product = salesTransactionController.checkForExistingProduct(detail.getProductID());
+            if (product != null) {
+                System.out.println("ID: " + detail.getProductID() + " - " + product.getName()
+                    + "Category: " + product.getCategory()
+                    + "Quantity: " + detail.getQuantity()
+                    + "Price: $" + detail.getPriceAtPurchase());
+            }
+        }
+    }
+
+    private void handleEditQuantity(List<OrderDetail> orderDetails) {
+        System.out.print("Enter Product ID to edit quantity: ");
+        String productId = scanner.nextLine().trim();
+        OrderDetail detailToEdit = null;
+        for (OrderDetail detail : orderDetails) {
+            if (detail.getProductID().equals(productId)) {
+                detailToEdit = detail;
+                break;
+            }
+        }
+        if (detailToEdit == null) {
+            System.out.println("Product not found in cart. Please try again.");
+            return;
+        }
+        int newQuantity = validateQuantityInput(productId);
+        if (newQuantity != -1) {
+            detailToEdit.setQuantity(newQuantity);
+            System.out.println("Quantity updated successfully.");
+            displayCurrentCart(orderDetails);
+        }
+    }
+
+    
 }

@@ -11,10 +11,18 @@ public class SalesTransaction implements Serializable{
     private double totalAmount;
     private List<OrderDetail> orderItems;
 
-    public SalesTransaction(String salesTransactionID, String customerID, Date date, double totalAmount, List<OrderDetail> orderItems) {
-        this.salesTransactionID = salesTransactionID;
+    private String generateTransactionID() {
+        return "TXN" + System.currentTimeMillis();
+    }
+
+    private Date getCurrentDate() {
+        return new Date(System.currentTimeMillis());
+    }
+
+    public SalesTransaction(String customerID, List<OrderDetail> orderItems,double totalAmount) {
+        this.salesTransactionID = generateTransactionID();
         this.customerID = customerID;
-        this.date = date;
+        this.date = getCurrentDate();
         this.totalAmount = totalAmount;
         this.orderItems = orderItems;
     }

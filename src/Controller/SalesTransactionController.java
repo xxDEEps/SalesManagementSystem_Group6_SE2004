@@ -5,6 +5,7 @@ import java.util.List;
 import Model.Customer;
 import Model.OrderDetail;
 import Model.Product;
+import Model.SalesTransaction;
 import Services.CustomerService;
 import Services.ProductService;
 import Services.SalesTransactionService;
@@ -19,19 +20,28 @@ public class SalesTransactionController {
         this.customerService = customerService;
     }
 
-    public String checkForExistingProduct(String productId) {
-        if (productService.getProductById(productId) == null) {
-            return "Product with ID " + productId + " does not exist or has been deleted.";
+    public Product checkForExistingProduct(String productId) {
+        Product product = productService.getProductById(productId);
+        if (product == null) {
+            return null;
         }
-        return null;
+        return product;
+    }
+
+    public double getProductPrice(String productId) {
+        Product product = productService.getProductById(productId);
+        if (product != null) {
+            return product.getPrice();
+        }
+        return -1;
     }
 
     public String checkForExistingCustomer(String customerId) {
         Customer customer = customerService.getCustomerById(customerId);
         if (customer == null) {
-            return "Customer with ID " + customerId + " does not exist or has been deleted.";
+            return null;
         }
-        return customer.getName();
+        return customer.getCustomerID();
     }
 
     public String checkForSufficientStock(String productId, int quantity) {
@@ -46,5 +56,16 @@ public class SalesTransactionController {
         return salesTransactionService.calculateTotalAmount(orderDetails, customerId);
     }
 
-    
+    public String handleAddSalesTransaction(String customerId, List<OrderDetail> orderDetails, double totalAmount) {
+        try {
+            salesTransactionService.addSalesTransaction(customerId, orderDetails, totalAmount);
+            return "Sales transaction added successfully.";
+        } catch (Exception e) {
+            return "Error adding sales transaction: " + e.getMessage();
+        }
+    }
+
+    public List<SalesTransaction> handleGetSalesTransactionHistory() {
+        return salesTransactionService.getAllSalesTransactions();
+    }
 }
