@@ -1,5 +1,8 @@
 package Services;
 
+import java.util.List;
+
+import Model.OrderDetail;
 import Repositories.CustomerRepository;
 import Repositories.ProductRepository;
 import Repositories.SalesTransactionRepository;
@@ -15,5 +18,12 @@ public class SalesTransactionService {
         this.customerService = customerService;
     }
 
+    public double calculateTotalAmount(List<OrderDetail> orderDetails, String customerId) {
+        double total = 0.0;
+        for (OrderDetail detail : orderDetails) {
+            total += detail.getQuantity() * detail.getPriceAtPurchase();
+        }
+        return total * (1 - customerService.getCustomerById(customerId).getDiscountRate());
+    }
 
 }

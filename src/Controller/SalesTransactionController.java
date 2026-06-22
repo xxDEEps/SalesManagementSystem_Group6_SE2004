@@ -1,5 +1,9 @@
 package Controller;
 
+import java.util.List;
+
+import Model.Customer;
+import Model.OrderDetail;
 import Model.Product;
 import Services.CustomerService;
 import Services.ProductService;
@@ -17,16 +21,17 @@ public class SalesTransactionController {
 
     public String checkForExistingProduct(String productId) {
         if (productService.getProductById(productId) == null) {
-            return "Product with ID " + productId + " does not exist.";
+            return "Product with ID " + productId + " does not exist or has been deleted.";
         }
         return null;
     }
 
     public String checkForExistingCustomer(String customerId) {
-        if (customerService.getCustomerById(customerId) == null) {
-            return "Customer with ID " + customerId + " does not exist.";
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer == null) {
+            return "Customer with ID " + customerId + " does not exist or has been deleted.";
         }
-        return null;
+        return customer.getName();
     }
 
     public String checkForSufficientStock(String productId, int quantity) {
@@ -36,4 +41,10 @@ public class SalesTransactionController {
         }
         return null;
     }
+
+    public double calculateTotalAmount(String customerId, List<OrderDetail> orderDetails) {
+        return salesTransactionService.calculateTotalAmount(orderDetails, customerId);
+    }
+
+    
 }

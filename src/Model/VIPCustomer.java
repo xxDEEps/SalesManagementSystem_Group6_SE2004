@@ -25,6 +25,7 @@ public class VIPCustomer extends Customer {
         this.discountRate = discountRate;
     }
 
+    @Override
     public double getDiscountRate() {
         return discountRate;
     }
@@ -32,4 +33,12 @@ public class VIPCustomer extends Customer {
     public void setDiscountRate(double discountRate) {
         this.discountRate = discountRate;
     }
+
+    //FOR SALES TRANSACTION 
+    @Override
+    public String getBillingInfo() {
+        return super.getBillingInfo() 
+        + "\nDiscount Rate: " + discountRate;
+    }
+
 }

@@ -57,4 +57,18 @@ public class CorporateCustomer extends Customer {
     public void setNegotiatedDiscountRate(double negotiatedDiscountRate) {
         this.negotiatedDiscountRate = negotiatedDiscountRate;
     }
+
+
+    //FOR SALES TRANSACTION
+    @Override
+    public double getDiscountRate() {
+        return negotiatedDiscountRate;
+    }
+    @Override
+    public String getBillingInfo() {
+        return super.getBillingInfo() 
+        + "\nCompany Name: " + companyName 
+        + "\nTax ID: " + taxID
+        + "\nNegotiated Discount Rate: " + negotiatedDiscountRate;
+    }
 }

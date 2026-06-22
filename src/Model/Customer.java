@@ -87,4 +87,16 @@ public class Customer implements Serializable {
     public void setDeleted(boolean deleted) {
         this.isDeleted = deleted;
     }
+
+
+    // FOR BILLING====================================
+    public double getDiscountRate() {
+        return 0.0; // Mặc định khách hàng thường không có giảm giá
+    }
+
+    public String getBillingInfo() {
+        return this.name + " (ID: " + this.customerID 
+        + "\nPhone: " + this.phone 
+        + "\nAddress: " + this.address;
+    }
 }
