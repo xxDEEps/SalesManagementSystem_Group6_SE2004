@@ -11,12 +11,12 @@ import java.io.Serializable;
  * @author LENOVO
  */
 public class Product implements Serializable{
-    String productID;
-    String name;
-    String category;
-    double price;
-    int stockQuantity;
-    boolean isDeleted = false;
+    private String productID;
+    private String name;
+    private String category;
+    private double price;
+    private int stockQuantity;
+    private boolean isDeleted = false;
 
     public Product(String productID, String name, String category, double price, int stockQuantity) {
         this.productID = productID;
