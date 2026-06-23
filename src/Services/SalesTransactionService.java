@@ -23,7 +23,7 @@ public class SalesTransactionService {
     public double calculateTotalAmount(List<OrderDetail> orderDetails, String customerId) {
         double total = 0.0;
         for (OrderDetail detail : orderDetails) {
-            total += detail.getQuantity() * detail.getPriceAtPurchase();
+            total += detail.calculateSubTotal();
         }
         return total * (1 - customerService.getCustomerById(customerId).getDiscountRate());
     }
