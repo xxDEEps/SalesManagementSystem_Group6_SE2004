@@ -3,6 +3,7 @@ package Services;
 import java.util.List;
 
 import Model.OrderDetail;
+import Model.Product;
 import Model.SalesTransaction;
 import Repositories.CustomerRepository;
 import Repositories.ProductRepository;
@@ -38,6 +39,14 @@ public class SalesTransactionService {
 
     public List<SalesTransaction> getAllSalesTransactions() {
         return salesTransactionRepository.getSalesTransactionsList();
+    }
+
+    public String checkForSufficientStock(String productId, int quantity) {
+        Product product = productService.getProductById(productId);
+        if (product != null && product.getStockQuantity() < quantity) {
+            return "Insufficient stock for product ID " + productId + ". Available: " + product.getStockQuantity();
+        }
+        return null;
     }
 
 }

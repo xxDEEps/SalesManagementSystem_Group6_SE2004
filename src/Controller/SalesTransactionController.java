@@ -49,9 +49,9 @@ public class SalesTransactionController {
     }
 
     public String checkForSufficientStock(String productId, int quantity) {
-        Product product = productService.getProductById(productId);
-        if (product != null && product.getStockQuantity() < quantity) {
-            return "Insufficient stock for product ID " + productId + ". Available: " + product.getStockQuantity();
+        String result = salesTransactionService.checkForSufficientStock(productId, quantity);
+        if (result != null) {
+            return result;
         }
         return null;
     }

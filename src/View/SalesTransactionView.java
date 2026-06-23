@@ -142,7 +142,7 @@ public class SalesTransactionView {
             return;
         }
         // Display transactions in newest to oldest order
-        transactions.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
+        //transactions.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
         for (SalesTransaction transaction : transactions) {
             System.out.println("Transaction ID: " + transaction.getSalesTransactionID());
             System.out.println("Customer ID: " + transaction.getCustomerID());
