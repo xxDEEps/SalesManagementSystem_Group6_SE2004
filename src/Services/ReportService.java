@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ReportService {
     private final SalesTransactionRepository salesRepo;
-    private final ProductRepository productRepo;
+    private final ProductRepository productRepoaaaa;
     private final CustomerRepository customerRepo;
     public ReportService(SalesTransactionRepository salesRepo, ProductRepository productRepo, CustomerRepository customerRepo) {
         this.salesRepo = salesRepo;
