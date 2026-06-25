@@ -27,4 +27,8 @@ public class CustomerController {
     public List<Customer> handleView() {
         return customerService.getAllCustomers();
     }
+
+    public Customer handleGetById(String id) {
+        return customerService.getCustomerById(id);
+    }
 }
