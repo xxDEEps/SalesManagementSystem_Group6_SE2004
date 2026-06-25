@@ -5,6 +5,7 @@ import java.util.List;
 import Controller.CustomerController;
 import Model.Customer;
 import Model.VIPCustomer;
+import Model.CorporateCustomer;
 
 public class CustomerView {
     private final CustomerController customerController;
@@ -28,22 +29,12 @@ public class CustomerView {
             choice = scanner.nextLine().trim();
 
             switch (choice) {
-                case "1":
-                    handleAddCustomer();
-                    break;
-                case "2":
-                    handleUpdateCustomer();
-                    break;
-                case "3":
-                    handleRemoveCustomer();
-                    break;
-                case "4":
-                    handleViewAllCustomers();
-                    break;
-                case "0":
-                    break;
-                default:
-                    System.out.println("Invalid option!");
+                case "1": handleAddCustomer();      break;
+                case "2": handleUpdateCustomer();   break;
+                case "3": handleRemoveCustomer();   break;
+                case "4": handleViewAllCustomers(); break;
+                case "0": break;
+                default:  System.out.println("Invalid option!");
             }
         } while (!choice.equals("0"));
     }
@@ -55,8 +46,9 @@ public class CustomerView {
         System.out.println("Select Customer Type:");
         System.out.println("1. Regular Customer");
         System.out.println("2. VIP Customer");
+        System.out.println("3. Corporate Customer");
 
-        String customerType = validateCustomerType("Choose type (1-2): ");
+        String customerType = validateCustomerType("Choose type (1-3): ");
 
         String id      = validateCustomerID("Enter Customer ID: ");
         String name    = validateName("Enter Full Name: ");
@@ -67,6 +59,11 @@ public class CustomerView {
         if (customerType.equals("2")) {
             double discountRate = validateDiscountRate("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
             customer = new VIPCustomer(id, name, phone, address, discountRate);
+        } else if (customerType.equals("3")) {
+            String companyName = validateCompanyName("Enter Company Name: ");
+            String taxID       = validateTaxID("Enter Tax ID: ");
+            double negotiatedDiscountRate = validateDiscountRate("Enter Negotiated Discount Rate (e.g., 0.1 for 10%): ");
+            customer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
         } else {
             customer = new Customer(id, name, phone, address);
         }
@@ -83,20 +80,12 @@ public class CustomerView {
     private void handleUpdateCustomer() {
         System.out.println("\n--- UPDATE CUSTOMER ---");
 
-        String id = validateCustomerID("Enter Customer ID to update: ");
-
-        List<Customer> currentList = customerController.handleView();
         Customer existingCustomer = null;
-        for (Customer c : currentList) {
-            if (c.getCustomerID().equalsIgnoreCase(id)) {
-                existingCustomer = c;
-                break;
-            }
-        }
-
-        if (existingCustomer == null) {
-            System.out.println(">> Error: Customer ID not found!");
-            return;
+        while (true) {
+            String id = validateCustomerID("Enter Customer ID to update: ");
+            existingCustomer = customerController.handleGetById(id);
+            if (existingCustomer != null) break;
+            System.out.println(">> Error: Customer ID not found! Please try again.");
         }
 
         // Name
@@ -130,7 +119,45 @@ public class CustomerView {
         }
 
         Customer updatedCustomer;
-        if (existingCustomer instanceof VIPCustomer) {
+
+        if (existingCustomer instanceof CorporateCustomer) {
+            CorporateCustomer existing = (CorporateCustomer) existingCustomer;
+
+            String companyName;
+            while (true) {
+                System.out.print("Enter New Company Name (leave blank to skip): ");
+                companyName = scanner.nextLine().trim();
+                if (companyName.isEmpty()) { companyName = existing.getCompanyName(); break; }
+                if (companyName.length() > 100) { System.out.println("Company name must not exceed 100 characters."); continue; }
+                break;
+            }
+
+            String taxID;
+            while (true) {
+                System.out.print("Enter New Tax ID (leave blank to skip): ");
+                taxID = scanner.nextLine().trim();
+                if (taxID.isEmpty()) { taxID = existing.getTaxID(); break; }
+                if (!taxID.matches("[A-Za-z0-9]+")) { System.out.println("Tax ID must only contain letters and numbers."); continue; }
+                break;
+            }
+
+            double negotiatedDiscountRate;
+            while (true) {
+                System.out.print("Enter New Negotiated Discount Rate (leave blank to skip): ");
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) { negotiatedDiscountRate = existing.getNegotiatedDiscountRate(); break; }
+                try {
+                    negotiatedDiscountRate = Double.parseDouble(input);
+                    if (negotiatedDiscountRate < 0 || negotiatedDiscountRate > 1) { System.out.println("Discount rate must be between 0 and 1."); continue; }
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid discount rate.");
+                }
+            }
+
+            updatedCustomer = new CorporateCustomer(existingCustomer.getCustomerID(), name, phone, address, companyName, taxID, negotiatedDiscountRate);
+
+        } else if (existingCustomer instanceof VIPCustomer) {
             double discountRate;
             while (true) {
                 System.out.print("Enter New VIP Discount Rate (leave blank to skip): ");
@@ -144,12 +171,13 @@ public class CustomerView {
                     System.out.println("Invalid discount rate.");
                 }
             }
-            updatedCustomer = new VIPCustomer(id, name, phone, address, discountRate);
+            updatedCustomer = new VIPCustomer(existingCustomer.getCustomerID(), name, phone, address, discountRate);
+
         } else {
-            updatedCustomer = new Customer(id, name, phone, address);
+            updatedCustomer = new Customer(existingCustomer.getCustomerID(), name, phone, address);
         }
 
-        if (customerController.handleUpdate(id, updatedCustomer)) {
+        if (customerController.handleUpdate(existingCustomer.getCustomerID(), updatedCustomer)) {
             System.out.println(">> Customer updated successfully!");
         } else {
             System.out.println(">> Update failed!");
@@ -191,8 +219,8 @@ public class CustomerView {
         while (true) {
             System.out.print(message);
             String type = scanner.nextLine().trim();
-            if (type.equals("1") || type.equals("2")) return type;
-            System.out.println("Please enter 1 or 2.");
+            if (type.equals("1") || type.equals("2") || type.equals("3")) return type;
+            System.out.println("Please enter 1, 2, or 3.");
         }
     }
 
@@ -241,6 +269,30 @@ public class CustomerView {
             if (address.isEmpty()) { System.out.println("Address cannot be empty."); continue; }
             if (address.length() > 100) { System.out.println("Address must not exceed 100 characters."); continue; }
             return address;
+        }
+    }
+
+    // ================= VALIDATE COMPANY NAME =================
+
+    private String validateCompanyName(String message) {
+        while (true) {
+            System.out.print(message);
+            String companyName = scanner.nextLine().trim();
+            if (companyName.isEmpty()) { System.out.println("Company name cannot be empty."); continue; }
+            if (companyName.length() > 100) { System.out.println("Company name must not exceed 100 characters."); continue; }
+            return companyName;
+        }
+    }
+
+    // ================= VALIDATE TAX ID =================
+
+    private String validateTaxID(String message) {
+        while (true) {
+            System.out.print(message);
+            String taxID = scanner.nextLine().trim();
+            if (taxID.isEmpty()) { System.out.println("Tax ID cannot be empty."); continue; }
+            if (!taxID.matches("[A-Za-z0-9]+")) { System.out.println("Tax ID must only contain letters and numbers."); continue; }
+            return taxID;
         }
     }
 
