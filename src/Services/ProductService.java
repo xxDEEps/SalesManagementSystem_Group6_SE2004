@@ -123,6 +123,15 @@ public class ProductService {
         }
         return product;
     }
+    // Get Product By ID but include deleted products
+    public Product getProductByIdIncludingDeleted(String id) {
+        Product product = productRepository.findByProductById(id);
+        if (product == null) {
+            return null;
+        }
+        return product;
+    }
+
 
     // Check Stock Availability
     public boolean isStockAvailable(String productId, int requiredQuantity) {

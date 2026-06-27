@@ -4,6 +4,7 @@ public class CorporateCustomer extends Customer {
     private String companyName;
     private String taxID;
     private double negotiatedDiscountRate; 
+    
     public CorporateCustomer(String customerID, String name, String phone, String address, String companyName, String taxID, double negotiatedDiscountRate) {
         super(customerID, name, phone, address);
         this.companyName = companyName;

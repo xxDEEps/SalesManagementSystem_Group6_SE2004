@@ -150,7 +150,7 @@ public class SalesTransactionView {
             System.out.println("Total Amount: $" + transaction.getTotalAmount());
             System.out.println("Order Details:");
             for (OrderDetail detail : transaction.getOrderItems()) {
-                Product product = salesTransactionController.checkForExistingProduct(detail.getProductID());
+                Product product = salesTransactionController.getProductByIdIncludingDeleted(detail.getProductID());
                 String productName = (product != null) ? product.getName() : "Unknown Product";
                 System.out.println("- " + productName + " (ID: " + detail.getProductID() + ") | Quantity: " + detail.getQuantity() + " | Price at Purchase: $" + detail.getPriceAtPurchase());
             }

@@ -28,6 +28,10 @@ public class SalesTransactionController {
         return product;
     }
 
+    public Product getProductByIdIncludingDeleted(String productId) {
+        return productService.getProductByIdIncludingDeleted(productId);
+    }
+
     public double getProductPrice(String productId) {
         Product product = productService.getProductById(productId);
         if (product != null) {
