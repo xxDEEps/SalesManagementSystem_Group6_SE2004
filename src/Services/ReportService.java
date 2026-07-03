@@ -8,6 +8,7 @@ import Repositories.CustomerRepository;
 import Repositories.ProductRepository;
 import Repositories.SalesTransactionRepository;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,92 +23,217 @@ public class ReportService {
         this.customerRepo = customerRepo;
     }
     
-     public double getSalesReportByPeriod(String period) {
-        double total = 0;
+    public String getSalesReportByPeriod(String period) {
         List<SalesTransaction> transactions = salesRepo.getSalesTransactionsList();
 
         SimpleDateFormat dayFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy");
 
-        for (SalesTransaction t : transactions) {
-            String day = dayFormat.format(t.getDate());
-            String month = monthFormat.format(t.getDate());
-
-            if (period.equals(day) || period.equals(month)) {
-                total += t.getTotalAmount();
-            }
-        }
-
-        return total;
-    }
-
-    public String getBestSellingProductReport() {
-        Map<String, Integer> productSoldMap = new HashMap<>();
-
-        for (SalesTransaction t : salesRepo.getSalesTransactionsList()) {
-            for (OrderDetail detail : t.getOrderItems()) {
-                String productId = detail.getProductID();
-                int quantity = detail.getQuantity();
-
-                productSoldMap.put(
-                    productId,
-                    productSoldMap.getOrDefault(productId, 0) + quantity
-                );
-            }
-        }
-
-        if (productSoldMap.isEmpty()) {
-            return "No sales data found.";
-        }
-
+        double totalRevenue = 0;
+        int totalOrders = 0;
+        int totalProductsSold = 0;
         String bestProductId = null;
-        int maxSold = 0;
-
-        for (String productId : productSoldMap.keySet()) {
-            int sold = productSoldMap.get(productId);
-            if (sold > maxSold) {
-                maxSold = sold;
-                bestProductId = productId;
-            }
-        }
-
-        Product product = productRepo.findByProductById(bestProductId);
-        String productName = product != null ? product.getName() : "Unknown Product";
-
-        return bestProductId + "    " + productName + "    " + maxSold + " units sold";
-    }
-
-    public String getTopCustomerReport() {
-        Map<String, Double> customerSpendingMap = new HashMap<>();
-
-        for (SalesTransaction t : salesRepo.getSalesTransactionsList()) {
-            String customerId = t.getCustomerID();
-            double amount = t.getTotalAmount();
-
-            customerSpendingMap.put(
-                customerId,
-                customerSpendingMap.getOrDefault(customerId, 0.0) + amount
-            );
-        }
-
-        if (customerSpendingMap.isEmpty()) {
-            return "No customer data found.";
-        }
-
+        int bestProductQty = 0;
         String topCustomerId = null;
-        double maxAmount = 0;
+        double topCustomerSpend = 0;
 
-        for (String customerId : customerSpendingMap.keySet()) {
-            double amount = customerSpendingMap.get(customerId);
-            if (amount > maxAmount) {
-                maxAmount = amount;
+        Map<String, Integer> productQtyMap = new HashMap<>();
+        Map<String, Double> customerSpendMap = new HashMap<>();
+
+        for (SalesTransaction transaction : transactions) {
+            String day = dayFormat.format(transaction.getDate());
+            String month = monthFormat.format(transaction.getDate());
+
+            if (!period.equals(day) && !period.equals(month)) {
+                continue;
+            }
+
+            totalRevenue += transaction.getTotalAmount();
+            totalOrders++;
+
+            for (OrderDetail detail : transaction.getOrderItems()) {
+                int quantity = detail.getQuantity();
+                totalProductsSold += quantity;
+
+                String productId = detail.getProductID();
+                int currentQty = productQtyMap.getOrDefault(productId, 0);
+                productQtyMap.put(productId, currentQty + quantity);
+
+                if (currentQty + quantity > bestProductQty) {
+                    bestProductQty = currentQty + quantity;
+                    bestProductId = productId;
+                }
+            }
+
+            String customerId = transaction.getCustomerID();
+            double currentSpend = customerSpendMap.getOrDefault(customerId, 0.0);
+            currentSpend += transaction.getTotalAmount();
+            customerSpendMap.put(customerId, currentSpend);
+
+            if (currentSpend > topCustomerSpend) {
+                topCustomerSpend = currentSpend;
                 topCustomerId = customerId;
             }
         }
 
-        Customer customer = customerRepo.findByCustomerById(topCustomerId);
-        String customerName = customer != null ? customer.getName() : "Unknown Customer";
+        if (totalOrders == 0) {
+            return "No sales data found for this period.";
+        }
 
-        return topCustomerId + "    " + customerName + "    " + String.format("%,.0f", maxAmount) + "$";
+        double averageOrderValue = totalRevenue / totalOrders;
+        Product bestProduct = productRepo.findByProductById(bestProductId);
+        String bestProductName = bestProduct != null ? bestProduct.getName() : "Unknown Product";
+        Customer topCustomer = customerRepo.findByCustomerById(topCustomerId);
+        String topCustomerName = topCustomer != null ? topCustomer.getName() : "Unknown Customer";
+
+        StringBuilder report = new StringBuilder();
+        report.append("Reporting Period : ").append(period).append(System.lineSeparator());
+        report.append("Total Revenue    : ").append(String.format("%,.0f", totalRevenue)).append("$").append(System.lineSeparator());
+        report.append("Total Orders     : ").append(totalOrders).append(System.lineSeparator());
+        report.append("Average Order    : ").append(String.format("%,.0f", averageOrderValue)).append("$").append(System.lineSeparator());
+        report.append("Products Sold    : ").append(totalProductsSold).append(System.lineSeparator());
+        report.append("Best Seller      : ").append(bestProductName).append(" (" ).append(bestProductQty).append(" units)").append(System.lineSeparator());
+        report.append("Top Customer     : ").append(topCustomerName).append(" (" ).append(String.format("%,.0f", topCustomerSpend)).append("$)").append(System.lineSeparator());
+
+        return report.toString().trim();
+    }
+
+    public String getBestSellingProductReport() {
+        List<String> productIds = new ArrayList<>();
+        List<Integer> soldQuantities = new ArrayList<>();
+
+        for (SalesTransaction transaction : salesRepo.getSalesTransactionsList()) {
+            for (OrderDetail detail : transaction.getOrderItems()) {
+                String productId = detail.getProductID();
+                int quantity = detail.getQuantity();
+
+                boolean found = false;
+                for (int i = 0; i < productIds.size(); i++) {
+                    if (productIds.get(i).equals(productId)) {
+                        soldQuantities.set(i, soldQuantities.get(i) + quantity);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    productIds.add(productId);
+                    soldQuantities.add(quantity);
+                }
+            }
+        }
+
+        if (productIds.isEmpty()) {
+            return "No sales data found.";
+        }
+
+        StringBuilder report = new StringBuilder();
+        int topCount = Math.min(productIds.size(), 3);
+
+        for (int rank = 0; rank < topCount; rank++) {
+            int bestIndex = 0;
+            int bestSoldQuantity = soldQuantities.get(0);
+
+            for (int i = 1; i < soldQuantities.size(); i++) {
+                if (soldQuantities.get(i) > bestSoldQuantity) {
+                    bestSoldQuantity = soldQuantities.get(i);
+                    bestIndex = i;
+                }
+            }
+
+            String productId = productIds.get(bestIndex);
+            Product product = productRepo.findByProductById(productId);
+            String productName = product != null ? product.getName() : "Unknown Product";
+
+            report.append("Top ")
+                  .append(rank + 1)
+                  .append(": ")
+                  .append(productId)
+                  .append(" - ")
+                  .append(productName)
+                  .append(" - ")
+                  .append(bestSoldQuantity)
+                  .append(" units sold")
+                  .append(System.lineSeparator());
+
+            soldQuantities.set(bestIndex, -1);
+        }
+
+        return report.toString().trim();
+    }
+
+    public String getTopCustomerReport(String period) {
+        List<String> customerIds = new ArrayList<>();
+        List<Double> totalSpendings = new ArrayList<>();
+
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy");
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+        for (SalesTransaction transaction : salesRepo.getSalesTransactionsList()) {
+            String transactionMonth = monthFormat.format(transaction.getDate());
+            String transactionYear = yearFormat.format(transaction.getDate());
+            boolean matchesPeriod = period.contains("/")
+                    ? period.equals(transactionMonth)
+                    : period.equals(transactionYear);
+
+            if (!matchesPeriod) {
+                continue;
+            }
+
+            String customerId = transaction.getCustomerID();
+            double amount = transaction.getTotalAmount();
+
+            boolean found = false;
+            for (int i = 0; i < customerIds.size(); i++) {
+                if (customerIds.get(i).equals(customerId)) {
+                    totalSpendings.set(i, totalSpendings.get(i) + amount);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                customerIds.add(customerId);
+                totalSpendings.add(amount);
+            }
+        }
+
+        if (customerIds.isEmpty()) {
+            return "No customer data found.";
+        }
+
+        StringBuilder report = new StringBuilder();
+        int topCount = Math.min(customerIds.size(), 3);
+
+        for (int rank = 0; rank < topCount; rank++) {
+            int bestIndex = 0;
+            double bestAmount = totalSpendings.get(0);
+
+            for (int i = 1; i < totalSpendings.size(); i++) {
+                if (totalSpendings.get(i) > bestAmount) {
+                    bestAmount = totalSpendings.get(i);
+                    bestIndex = i;
+                }
+            }
+
+            String customerId = customerIds.get(bestIndex);
+            Customer customer = customerRepo.findByCustomerById(customerId);
+            String customerName = customer != null ? customer.getName() : "Unknown Customer";
+
+            report.append("Top ")
+                  .append(rank + 1)
+                  .append(": ")
+                  .append(customerId)
+                  .append(" - ")
+                  .append(customerName)
+                  .append(" - ")
+                  .append(String.format("%,.0f", bestAmount))
+                  .append("$")
+                  .append(System.lineSeparator());
+
+            totalSpendings.set(bestIndex, -1.0);
+        }
+
+        return report.toString().trim();
     }
 }

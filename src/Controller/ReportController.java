@@ -10,7 +10,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    public double handleSalesReport(String period) {
+    public String handleSalesReport(String period) {
         return reportService.getSalesReportByPeriod(period);
     }
 
@@ -18,7 +18,7 @@ public class ReportController {
         return reportService.getBestSellingProductReport();
     }
 
-    public String handleTopCustomers() {
-        return reportService.getTopCustomerReport();
+    public String handleTopCustomers(String period) {
+        return reportService.getTopCustomerReport(period);
     }
 }

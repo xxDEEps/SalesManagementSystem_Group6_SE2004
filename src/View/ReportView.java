@@ -74,16 +74,12 @@ public class ReportView {
         }
 
         System.out.println("\n⚡ Fetching data from database...");
-        double total = reportController.handleSalesReport(period);
+        String salesReport = reportController.handleSalesReport(period);
 
-        // Hiển thị report chi tiết và "dài" hơn một chút cho đẹp mắt
         System.out.println("\n==================================================");
         System.out.println("                SALES REVENUE REPORT              ");
         System.out.println("==================================================");
-        System.out.printf(" Reporting Period : %s\n", period);
-        System.out.printf(" Currency         : $ \n");
-        System.out.println("--------------------------------------------------");
-        System.out.printf(" Total Gross Revenue : %s $\n", String.format("%,.0f", total));
+        System.out.println(salesReport);
         System.out.println("--------------------------------------------------");
         System.out.println(" Status              : Successfully Generated");
         System.out.println("==================================================");
@@ -112,16 +108,42 @@ public class ReportView {
 
     private void showBestSellingProducts() {
         System.out.println("\n---------- BEST-SELLING PRODUCTS ----------");
+        System.out.println("Top 3 products by quantity sold:");
         System.out.println(reportController.handleBestSellingProducts());
         System.out.println("-------------------------------------------");
         pressEnterToReturn();
     }
 
     private void showTopCustomers() {
-        System.out.println("\n---------- TOP CUSTOMERS ----------");
-        System.out.println(reportController.handleTopCustomers());
+        String period = "";
+        boolean isValid = false;
+
+        System.out.println("\n---------- TOP SPENDING CUSTOMERS ----------");
+
+        while (!isValid) {
+            System.out.print("Enter month (MM/yyyy) or year (yyyy) [Or '0' to cancel]: ");
+            period = scanner.nextLine().trim();
+
+            if (period.equals("0")) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+
+            if (validateTopCustomerPeriod(period)) {
+                isValid = true;
+            } else {
+                System.out.println(" Error: Invalid format! Please enter MM/yyyy or yyyy.");
+            }
+        }
+
+        System.out.println("\n⚡ Fetching customer spending data...");
+        System.out.println(reportController.handleTopCustomers(period));
         System.out.println("-----------------------------------");
         pressEnterToReturn();
+    }
+
+    private boolean validateTopCustomerPeriod(String period) {
+        return period.matches("\\d{2}/\\d{4}") || period.matches("\\d{4}");
     }
 
     private void pressEnterToReturn() {
