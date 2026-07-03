@@ -43,7 +43,8 @@ public class ProductController {
         try {
             boolean success = productService.deleteProduct(id);
             if (success) {
-                return "Product deleted successfully.";
+                Product product = productService.getProductByIdIncludingDeleted(id);
+                return "Product " + product.getName() + " (" + product.getProductID() + ") deleted successfully.";
             } else {
                 return "Failed to delete product. Product may not exist or has been deleted.";
             }
