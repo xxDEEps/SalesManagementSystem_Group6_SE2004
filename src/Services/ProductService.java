@@ -19,7 +19,7 @@ public class ProductService {
 
         Product existing = productRepository.findByProductById(product.getProductID());
 
-        if (existing != null && !existing.isDeleted()) {
+        if (existing != null) {
             return false;
         }
 

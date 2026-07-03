@@ -69,4 +69,21 @@ public class ProductController {
             return Collections.emptyList();
         }
     }
+    
+    public Product handleGetProductById(String id) {
+        try {
+            return productService.getProductById(id);
+        } catch (Exception e) {
+            System.err.println("Error occurred while retrieving product by ID: " + e.getMessage());
+            return null;
+        }
+    }
+    public boolean isProductIdExistsIncludingDeleted(String id) {
+        try {
+            return productService.getProductByIdIncludingDeleted(id) != null;
+        } catch (Exception e) {
+            System.err.println("Error occurred while checking product ID existence: " + e.getMessage());
+            return false;
+        }
+    }
 }

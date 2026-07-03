@@ -82,7 +82,7 @@ public class CustomerView {
 
         Customer existingCustomer = null;
         while (true) {
-            String id = validateCustomerID("Enter Customer ID to update: ");
+            String id = validateCustomerIDForUpdate("Enter Customer ID to update: ");
             existingCustomer = customerController.handleGetById(id);
             if (existingCustomer != null) break;
             System.out.println(">> Error: Customer ID not found! Please try again.");
@@ -189,7 +189,7 @@ public class CustomerView {
     private void handleRemoveCustomer() {
         System.out.println("\n--- REMOVE CUSTOMER ---");
 
-        String id = validateCustomerID("Enter Customer ID to remove: ");
+        String id = validateCustomerIDForDelete("Enter Customer ID to remove: ");
 
         if (customerController.handleDelete(id)) {
             System.out.println(">> Customer removed successfully (Soft Deleted)!");
@@ -232,6 +232,38 @@ public class CustomerView {
             String id = scanner.nextLine().trim();
             if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
             if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
+            if (customerController.isCustomerIdExistsIncludingDeleted(id)) {
+                System.out.println("Customer ID already exists.");
+                continue;
+            }
+            return id;
+        }
+    }
+
+    private String validateCustomerIDForUpdate(String message) {
+        while (true) {
+            System.out.print(message);
+            String id = scanner.nextLine().trim();
+            if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
+            if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
+            if (customerController.handleGetById(id) == null) {
+                System.out.println("Customer ID does not exist or has been deleted.");
+                continue;
+            }
+            return id;
+        }
+    }
+
+    private String validateCustomerIDForDelete(String message) {
+        while (true) {
+            System.out.print(message);
+            String id = scanner.nextLine().trim();
+            if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
+            if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
+            if (customerController.handleGetById(id) == null) {
+                System.out.println("Customer ID does not exist or has been deleted.");
+                continue;
+            }
             return id;
         }
     }

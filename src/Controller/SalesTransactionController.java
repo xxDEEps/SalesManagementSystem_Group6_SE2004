@@ -52,6 +52,10 @@ public class SalesTransactionController {
         return customerService.getCustomerById(customerId);
     }
 
+    public Customer getCustomerByIdIncludingDeleted(String customerId) {
+        return customerService.getCustomerByIdIncludingDeleted(customerId);
+    }
+
     public String checkForSufficientStock(String productId, int quantity) {
         String result = salesTransactionService.checkForSufficientStock(productId, quantity);
         if (result != null) {

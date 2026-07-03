@@ -146,6 +146,7 @@ public class SalesTransactionView {
         for (SalesTransaction transaction : transactions) {
             System.out.println("Transaction ID: " + transaction.getSalesTransactionID());
             System.out.println("Customer ID: " + transaction.getCustomerID());
+            System.out.println("Customer Name: " + salesTransactionController.getCustomerByIdIncludingDeleted(transaction.getCustomerID()).getName());
             System.out.println("Date: " + transaction.getDate());
             System.out.println("Total Amount: $" + transaction.getTotalAmount());
             System.out.println("Order Details:");

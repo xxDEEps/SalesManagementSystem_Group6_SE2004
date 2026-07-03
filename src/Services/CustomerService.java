@@ -20,7 +20,7 @@ public class CustomerService {
     public boolean addNewCustomer(Customer customer) {
         Customer existing = repository.findByCustomerById(customer.getCustomerID());
         // Nếu đã tồn tại khách hàng và chưa bị xóa mềm thì báo trùng
-        if (existing != null && !existing.isDeleted()) {
+        if (existing != null) {
             return false;
         }
         return repository.saveNewCustomer(customer);
@@ -67,5 +67,9 @@ public class CustomerService {
             return customer;
         }
         return null;
+    }
+
+    public Customer getCustomerByIdIncludingDeleted(String id) {
+        return repository.findByCustomerById(id);
     }
 }

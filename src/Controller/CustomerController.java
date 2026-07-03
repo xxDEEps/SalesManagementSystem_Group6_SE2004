@@ -31,4 +31,17 @@ public class CustomerController {
     public Customer handleGetById(String id) {
         return customerService.getCustomerById(id);
     }
+
+    public boolean isCustomerIdExistsIncludingDeleted(String id) {
+        try {
+            return customerService.getCustomerByIdIncludingDeleted(id) != null;
+        } catch (Exception e) {
+            System.err.println("Error occurred while checking customer ID existence: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Customer handleGetByIdIncludingDeleted(String id) {
+        return customerService.getCustomerByIdIncludingDeleted(id);
+    }
 }

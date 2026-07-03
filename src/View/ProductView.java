@@ -91,7 +91,7 @@ public class ProductView {
 
         System.out.println("\n===== UPDATE PRODUCT =====");
 
-        String id = validateProductID("Enter Product ID: ");
+        String id = validateProductIDForUpdateAndDelete("Enter Product ID: ");
 
         System.out.print("Enter New Name (leave blank to skip): ");
         String name = scanner.nextLine().trim();
@@ -167,7 +167,7 @@ public class ProductView {
 
         System.out.println("\n===== REMOVE PRODUCT =====");
 
-        String id = validateProductID("Enter Product ID: ");
+        String id = validateProductIDForUpdateAndDelete("Enter Product ID: ");
 
         String result = productController.handleDeleteProduct(id);
 
@@ -232,6 +232,38 @@ public class ProductView {
 
             if (!id.matches("[A-Za-z0-9]+")) {
                 System.out.println("Product ID only contains letters and numbers.");
+                continue;
+            }
+
+            if (productController.isProductIdExistsIncludingDeleted(id)) {
+                System.out.println("Product ID already exists.");
+                continue;
+            }
+
+            return id;
+        }
+    }
+
+    private String validateProductIDForUpdateAndDelete(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String id = scanner.nextLine().trim();
+
+            if (id.isEmpty()) {
+                System.out.println("Product ID cannot be empty.");
+                continue;
+            }
+
+            if (!id.matches("[A-Za-z0-9]+")) {
+                System.out.println("Product ID only contains letters and numbers.");
+                continue;
+            }
+
+            if (productController.handleGetProductById(id) == null) {
+                System.out.println("Product ID does not exist or has been deleted.");
                 continue;
             }
 
