@@ -260,6 +260,187 @@ public class DataSeeder {
         txn13.setSalesTransactionID("T013");
         txn13.setDate(Date.valueOf("2024-03-15"));
         transactions.add(txn13);
+
+        // Transaction 14: John Smith buys more laptops and accessories in April
+        List<OrderDetail> orderItems14 = new ArrayList<>();
+        orderItems14.add(new OrderDetail("P001", 2, 999.99));
+        orderItems14.add(new OrderDetail("P008", 10, 19.99));
+        orderItems14.add(new OrderDetail("P010", 5, 9.99));
+        double total14 = (2 * 999.99) + (10 * 19.99) + (5 * 9.99);
+        SalesTransaction txn14 = new SalesTransaction("C001", orderItems14, total14);
+        txn14.setSalesTransactionID("T014");
+        txn14.setDate(Date.valueOf("2024-04-02"));
+        transactions.add(txn14);
+
+        // Transaction 15: VIP customer buys phone and audio gear in April
+        List<OrderDetail> orderItems15 = new ArrayList<>();
+        orderItems15.add(new OrderDetail("P002", 1, 1299.99));
+        orderItems15.add(new OrderDetail("P003", 2, 349.99));
+        orderItems15.add(new OrderDetail("P007", 4, 49.99));
+        double total15 = 1299.99 + (2 * 349.99) + (4 * 49.99);
+        SalesTransaction txn15 = new SalesTransaction("V001", orderItems15, total15);
+        txn15.setSalesTransactionID("T015");
+        txn15.setDate(Date.valueOf("2024-04-10"));
+        transactions.add(txn15);
+
+        // Transaction 16: Sarah Johnson buys accessories in April
+        List<OrderDetail> orderItems16 = new ArrayList<>();
+        orderItems16.add(new OrderDetail("P006", 3, 149.99));
+        orderItems16.add(new OrderDetail("P007", 6, 49.99));
+        orderItems16.add(new OrderDetail("P008", 15, 19.99));
+        double total16 = (3 * 149.99) + (6 * 49.99) + (15 * 19.99);
+        SalesTransaction txn16 = new SalesTransaction("C002", orderItems16, total16);
+        txn16.setSalesTransactionID("T016");
+        txn16.setDate(Date.valueOf("2024-04-18"));
+        transactions.add(txn16);
+
+        // Transaction 17: Corporate customer buys office equipment in May
+        List<OrderDetail> orderItems17 = new ArrayList<>();
+        orderItems17.add(new OrderDetail("P005", 2, 499.99));
+        orderItems17.add(new OrderDetail("P001", 1, 999.99));
+        orderItems17.add(new OrderDetail("P006", 8, 149.99));
+        double total17 = (2 * 499.99) + 999.99 + (8 * 149.99);
+        SalesTransaction txn17 = new SalesTransaction("CORP001", orderItems17, total17);
+        txn17.setSalesTransactionID("T017");
+        txn17.setDate(Date.valueOf("2024-05-03"));
+        transactions.add(txn17);
+
+        // Transaction 18: VIP customer buys iPad and cases in May
+        List<OrderDetail> orderItems18 = new ArrayList<>();
+        orderItems18.add(new OrderDetail("P004", 2, 599.99));
+        orderItems18.add(new OrderDetail("P009", 5, 29.99));
+        double total18 = (2 * 599.99) + (5 * 29.99);
+        SalesTransaction txn18 = new SalesTransaction("V002", orderItems18, total18);
+        txn18.setSalesTransactionID("T018");
+        txn18.setDate(Date.valueOf("2024-05-12"));
+        transactions.add(txn18);
+
+        // Transaction 19: Michael Brown buys lots of accessories in May
+        List<OrderDetail> orderItems19 = new ArrayList<>();
+        orderItems19.add(new OrderDetail("P007", 10, 49.99));
+        orderItems19.add(new OrderDetail("P008", 20, 19.99));
+        orderItems19.add(new OrderDetail("P010", 30, 9.99));
+        double total19 = (10 * 49.99) + (20 * 19.99) + (30 * 9.99);
+        SalesTransaction txn19 = new SalesTransaction("C003", orderItems19, total19);
+        txn19.setSalesTransactionID("T019");
+        txn19.setDate(Date.valueOf("2024-05-20"));
+        transactions.add(txn19);
+
+        // Transaction 20: Corporate customer buys premium phones in June
+        List<OrderDetail> orderItems20 = new ArrayList<>();
+        orderItems20.add(new OrderDetail("P002", 4, 1299.99));
+        orderItems20.add(new OrderDetail("P003", 3, 349.99));
+        orderItems20.add(new OrderDetail("P005", 2, 499.99));
+        double total20 = (4 * 1299.99) + (3 * 349.99) + (2 * 499.99);
+        SalesTransaction txn20 = new SalesTransaction("CORP002", orderItems20, total20);
+        txn20.setSalesTransactionID("T020");
+        txn20.setDate(Date.valueOf("2024-06-01"));
+        transactions.add(txn20);
+
+        // Transaction 21: Emily Davis buys laptop and iPad in June
+        List<OrderDetail> orderItems21 = new ArrayList<>();
+        orderItems21.add(new OrderDetail("P001", 1, 999.99));
+        orderItems21.add(new OrderDetail("P004", 1, 599.99));
+        orderItems21.add(new OrderDetail("P009", 2, 29.99));
+        double total21 = 999.99 + 599.99 + (2 * 29.99);
+        SalesTransaction txn21 = new SalesTransaction("C004", orderItems21, total21);
+        txn21.setSalesTransactionID("T021");
+        txn21.setDate(Date.valueOf("2024-06-15"));
+        transactions.add(txn21);
+
+        // Transaction 22: VIP customer makes another strong purchase in June
+        List<OrderDetail> orderItems22 = new ArrayList<>();
+        orderItems22.add(new OrderDetail("P002", 1, 1299.99));
+        orderItems22.add(new OrderDetail("P001", 1, 999.99));
+        orderItems22.add(new OrderDetail("P006", 5, 149.99));
+        double total22 = 1299.99 + 999.99 + (5 * 149.99);
+        SalesTransaction txn22 = new SalesTransaction("V003", orderItems22, total22);
+        txn22.setSalesTransactionID("T022");
+        txn22.setDate(Date.valueOf("2024-06-30"));
+        transactions.add(txn22);
+
+        // Transaction 23: Another year sample for yearly demo
+        List<OrderDetail> orderItems23 = new ArrayList<>();
+        orderItems23.add(new OrderDetail("P003", 1, 349.99));
+        orderItems23.add(new OrderDetail("P008", 10, 19.99));
+        orderItems23.add(new OrderDetail("P010", 12, 9.99));
+        double total23 = 349.99 + (10 * 19.99) + (12 * 9.99);
+        SalesTransaction txn23 = new SalesTransaction("C005", orderItems23, total23);
+        txn23.setSalesTransactionID("T023");
+        txn23.setDate(Date.valueOf("2025-01-12"));
+        transactions.add(txn23);
+
+        // Transaction 24: Busy month demo - many transactions in one month
+        List<OrderDetail> orderItems24 = new ArrayList<>();
+        orderItems24.add(new OrderDetail("P001", 3, 999.99));
+        orderItems24.add(new OrderDetail("P002", 2, 1299.99));
+        orderItems24.add(new OrderDetail("P006", 10, 149.99));
+        double total24 = (3 * 999.99) + (2 * 1299.99) + (10 * 149.99);
+        SalesTransaction txn24 = new SalesTransaction("CORP001", orderItems24, total24);
+        txn24.setSalesTransactionID("T024");
+        txn24.setDate(Date.valueOf("2024-07-01"));
+        transactions.add(txn24);
+
+        List<OrderDetail> orderItems25 = new ArrayList<>();
+        orderItems25.add(new OrderDetail("P004", 4, 599.99));
+        orderItems25.add(new OrderDetail("P005", 3, 499.99));
+        orderItems25.add(new OrderDetail("P007", 15, 49.99));
+        double total25 = (4 * 599.99) + (3 * 499.99) + (15 * 49.99);
+        SalesTransaction txn25 = new SalesTransaction("V002", orderItems25, total25);
+        txn25.setSalesTransactionID("T025");
+        txn25.setDate(Date.valueOf("2024-07-03"));
+        transactions.add(txn25);
+
+        List<OrderDetail> orderItems26 = new ArrayList<>();
+        orderItems26.add(new OrderDetail("P003", 5, 349.99));
+        orderItems26.add(new OrderDetail("P008", 25, 19.99));
+        orderItems26.add(new OrderDetail("P009", 20, 29.99));
+        double total26 = (5 * 349.99) + (25 * 19.99) + (20 * 29.99);
+        SalesTransaction txn26 = new SalesTransaction("C003", orderItems26, total26);
+        txn26.setSalesTransactionID("T026");
+        txn26.setDate(Date.valueOf("2024-07-06"));
+        transactions.add(txn26);
+
+        List<OrderDetail> orderItems27 = new ArrayList<>();
+        orderItems27.add(new OrderDetail("P001", 2, 999.99));
+        orderItems27.add(new OrderDetail("P003", 3, 349.99));
+        orderItems27.add(new OrderDetail("P010", 40, 9.99));
+        double total27 = (2 * 999.99) + (3 * 349.99) + (40 * 9.99);
+        SalesTransaction txn27 = new SalesTransaction("C001", orderItems27, total27);
+        txn27.setSalesTransactionID("T027");
+        txn27.setDate(Date.valueOf("2024-07-09"));
+        transactions.add(txn27);
+
+        List<OrderDetail> orderItems28 = new ArrayList<>();
+        orderItems28.add(new OrderDetail("P002", 3, 1299.99));
+        orderItems28.add(new OrderDetail("P004", 2, 599.99));
+        orderItems28.add(new OrderDetail("P006", 12, 149.99));
+        double total28 = (3 * 1299.99) + (2 * 599.99) + (12 * 149.99);
+        SalesTransaction txn28 = new SalesTransaction("V001", orderItems28, total28);
+        txn28.setSalesTransactionID("T028");
+        txn28.setDate(Date.valueOf("2024-07-12"));
+        transactions.add(txn28);
+
+        List<OrderDetail> orderItems29 = new ArrayList<>();
+        orderItems29.add(new OrderDetail("P005", 4, 499.99));
+        orderItems29.add(new OrderDetail("P008", 30, 19.99));
+        orderItems29.add(new OrderDetail("P009", 25, 29.99));
+        double total29 = (4 * 499.99) + (30 * 19.99) + (25 * 29.99);
+        SalesTransaction txn29 = new SalesTransaction("CORP003", orderItems29, total29);
+        txn29.setSalesTransactionID("T029");
+        txn29.setDate(Date.valueOf("2024-07-15"));
+        transactions.add(txn29);
+
+        List<OrderDetail> orderItems30 = new ArrayList<>();
+        orderItems30.add(new OrderDetail("P001", 1, 999.99));
+        orderItems30.add(new OrderDetail("P002", 1, 1299.99));
+        orderItems30.add(new OrderDetail("P003", 2, 349.99));
+        orderItems30.add(new OrderDetail("P007", 8, 49.99));
+        double total30 = 999.99 + 1299.99 + (2 * 349.99) + (8 * 49.99);
+        SalesTransaction txn30 = new SalesTransaction("C004", orderItems30, total30);
+        txn30.setSalesTransactionID("T030");
+        txn30.setDate(Date.valueOf("2024-07-20"));
+        transactions.add(txn30);
         
         try {
             salesTransactionRepo.writeTransactionsToFile(transactions);
