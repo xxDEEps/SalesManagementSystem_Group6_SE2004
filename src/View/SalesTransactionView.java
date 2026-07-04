@@ -153,7 +153,7 @@ public class SalesTransactionView {
             for (OrderDetail detail : transaction.getOrderItems()) {
                 Product product = salesTransactionController.getProductByIdIncludingDeleted(detail.getProductID());
                 String productName = (product != null) ? product.getName() : "Unknown Product";
-                System.out.println("- " + productName + " (ID: " + detail.getProductID() + ") | Quantity: " + detail.getQuantity() + " | Price at Purchase: $" + detail.getPriceAtPurchase());
+                System.out.println("- " + productName + " (ID: " + detail.getProductID() + ") | Quantity: " + detail.getQuantity() + " | Price at Purchase: $" + detail.getPriceAtPurchase() + " | Subtotal: $" + String.format("%.2f", detail.calculateSubTotal()));
             }
             System.out.println("-----------------------------------");
         }

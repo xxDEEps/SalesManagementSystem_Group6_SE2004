@@ -35,6 +35,7 @@ public class SalesTransactionService {
         }
         
         salesTransactionRepository.addSalesTransaction(transaction);
+        printSalesTransaction(transaction);
     }
 
     public List<SalesTransaction> getAllSalesTransactions() {
@@ -47,6 +48,16 @@ public class SalesTransactionService {
             return "Insufficient stock for product ID " + productId + ". Available: " + product.getStockQuantity();
         }
         return null;
+    }
+
+    public void printSalesTransaction(SalesTransaction transaction) {
+        System.out.println("Sales Transaction ID: " + transaction.getSalesTransactionID());
+        System.out.println("Customer: " + customerService.getCustomerById(transaction.getCustomerID()).getName());
+        System.out.println("Order Details:");
+        for (OrderDetail detail : transaction.getOrderItems()) {
+            System.out.println("Product Name: " + productService.getProductById(detail.getProductID()).getName() + " | Quantity: " + detail.getQuantity() + " | Subtotal: " + detail.calculateSubTotal());
+        }
+        System.out.println("Total Amount: " + transaction.getTotalAmount());
     }
 
 }
