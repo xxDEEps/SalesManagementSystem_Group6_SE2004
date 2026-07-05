@@ -6,6 +6,7 @@ import Model.Customer;
 import Model.OrderDetail;
 import Model.Product;
 import Model.SalesTransaction;
+import Model.VIPCustomer;
 import Services.CustomerService;
 import Services.ProductService;
 import Services.SalesTransactionService;
@@ -79,6 +80,10 @@ public class SalesTransactionController {
 
     public List<SalesTransaction> handleGetSalesTransactionHistory() {
         return salesTransactionService.getAllSalesTransactions();
+    }
+
+    public void printSalesTransaction(SalesTransaction transaction) {
+        salesTransactionService.printSalesTransaction(transaction);
     }
     
 }

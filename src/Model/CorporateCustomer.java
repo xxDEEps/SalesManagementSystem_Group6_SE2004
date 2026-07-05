@@ -73,4 +73,14 @@ public class CorporateCustomer extends Customer {
         + "\nNegotiated Discount Rate: " + negotiatedDiscountRate
         + "\n---";
     }
+
+    public void printVATInvoice(double totalAmount){
+        System.out.println("=== VAT Invoice ===");
+        System.out.println("Company Name: " + companyName);
+        System.out.println("Tax ID: " + taxID);
+        System.out.println("Original Amount: $" + String.format("%.2f", totalAmount*0.9));
+        System.out.println("VAT (10%): $" + String.format("%.2f", totalAmount*0.1));
+        System.out.println("Total Amount (including VAT): $" + String.format("%.2f", totalAmount));
+        System.out.println("===================");
+    }
 }

@@ -2,6 +2,7 @@ package Services;
 
 import java.util.List;
 
+import Model.CorporateCustomer;
 import Model.OrderDetail;
 import Model.Product;
 import Model.SalesTransaction;
@@ -36,6 +37,11 @@ public class SalesTransactionService {
         
         salesTransactionRepository.addSalesTransaction(transaction);
         printSalesTransaction(transaction);
+        //in hoa don do
+        if (customerService.getCustomerById(customerId) instanceof CorporateCustomer) {
+            CorporateCustomer corporateCustomer = (CorporateCustomer) customerService.getCustomerById(customerId);
+            corporateCustomer.printVATInvoice(totalAmount);
+        }
     }
 
     public List<SalesTransaction> getAllSalesTransactions() {
@@ -51,13 +57,19 @@ public class SalesTransactionService {
     }
 
     public void printSalesTransaction(SalesTransaction transaction) {
-        System.out.println("Sales Transaction ID: " + transaction.getSalesTransactionID());
-        System.out.println("Customer: " + customerService.getCustomerById(transaction.getCustomerID()).getName());
-        System.out.println("Order Details:");
-        for (OrderDetail detail : transaction.getOrderItems()) {
-            System.out.println("Product Name: " + productService.getProductById(detail.getProductID()).getName() + " | Quantity: " + detail.getQuantity() + " | Subtotal: " + detail.calculateSubTotal());
-        }
-        System.out.println("Total Amount: " + transaction.getTotalAmount());
+        System.out.println("------------------------------------------------------");
+        System.out.println("Transaction ID: " + transaction.getSalesTransactionID());
+            System.out.println("Customer ID: " + transaction.getCustomerID());
+            System.out.println("Customer Name: " + customerService.getCustomerByIdIncludingDeleted(transaction.getCustomerID()).getName());
+            System.out.println("Date: " + transaction.getDate());
+            System.out.println("Total Amount: $" + String.format("%.2f", transaction.getTotalAmount()));
+            System.out.println("Order Details:");
+            for (OrderDetail detail : transaction.getOrderItems()) {
+                Product product = productService.getProductByIdIncludingDeleted(detail.getProductID());
+                String productName = (product != null) ? product.getName() : "Unknown Product";
+                System.out.println("- " + productName + " (ID: " + detail.getProductID() + ") | Quantity: " + detail.getQuantity() + " | Price at Purchase: $" + detail.getPriceAtPurchase() + "\n >Subtotal: $" + String.format("%.2f", detail.calculateSubTotal()));
+            }
+            
     }
 
 }

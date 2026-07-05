@@ -145,18 +145,7 @@ public class SalesTransactionView {
         // Display transactions in newest to oldest order
         //transactions.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
         for (SalesTransaction transaction : transactions) {
-            System.out.println("Transaction ID: " + transaction.getSalesTransactionID());
-            System.out.println("Customer ID: " + transaction.getCustomerID());
-            System.out.println("Customer Name: " + salesTransactionController.getCustomerByIdIncludingDeleted(transaction.getCustomerID()).getName());
-            System.out.println("Date: " + transaction.getDate());
-            System.out.println("Total Amount: $" + String.format("%.2f", transaction.getTotalAmount()));
-            System.out.println("Order Details:");
-            for (OrderDetail detail : transaction.getOrderItems()) {
-                Product product = salesTransactionController.getProductByIdIncludingDeleted(detail.getProductID());
-                String productName = (product != null) ? product.getName() : "Unknown Product";
-                System.out.println("- " + productName + " (ID: " + detail.getProductID() + ") | Quantity: " + detail.getQuantity() + " | Price at Purchase: $" + detail.getPriceAtPurchase() + " | Subtotal: $" + String.format("%.2f", detail.calculateSubTotal()));
-            }
-            System.out.println("-----------------------------------");
+            salesTransactionController.printSalesTransaction(transaction);
         }
     }
 
