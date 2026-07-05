@@ -72,4 +72,13 @@ public class CustomerService {
     public Customer getCustomerByIdIncludingDeleted(String id) {
         return repository.findByCustomerById(id);
     }
+
+    public void addPointsToVIPCustomer(String customerId, int pointsToAdd) {
+        Customer customer = repository.findByCustomerById(customerId);
+        if (customer instanceof Model.VIPCustomer) {
+            Model.VIPCustomer vipCustomer = (Model.VIPCustomer) customer;
+            vipCustomer.addPoints(pointsToAdd);
+            repository.updateCustomer(customerId, vipCustomer);
+        }
+    }
 }

@@ -45,4 +45,11 @@ public class VIPCustomer extends Customer {
         + "\n---";
     }
 
+    public int getPoints() {
+        return points;
+    }
+
+    public void addPoints(int points) {
+        this.points += points;
+    }
 }

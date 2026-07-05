@@ -6,6 +6,7 @@ import Model.CorporateCustomer;
 import Model.OrderDetail;
 import Model.Product;
 import Model.SalesTransaction;
+import Model.VIPCustomer;
 import Repositories.CustomerRepository;
 import Repositories.ProductRepository;
 import Repositories.SalesTransactionRepository;
@@ -41,6 +42,13 @@ public class SalesTransactionService {
         if (customerService.getCustomerById(customerId) instanceof CorporateCustomer) {
             CorporateCustomer corporateCustomer = (CorporateCustomer) customerService.getCustomerById(customerId);
             corporateCustomer.printVATInvoice(totalAmount);
+        }
+        if (customerService.getCustomerById(customerId) instanceof VIPCustomer) {
+            int pointsEarned = (int) (totalAmount / 10);
+            customerService.addPointsToVIPCustomer(customerId, pointsEarned);
+            System.out.println("Points earned from this transaction: " + pointsEarned);
+            VIPCustomer vipCustomer = (VIPCustomer) customerService.getCustomerById(customerId);
+            System.out.println("Total points: " + vipCustomer.getPoints());
         }
     }
 
