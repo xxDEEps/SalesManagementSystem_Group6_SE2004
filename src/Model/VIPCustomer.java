@@ -2,10 +2,12 @@ package Model;
 
 public class VIPCustomer extends Customer {
     private double discountRate;
+    private int points;
 
     public VIPCustomer(String customerID, String name, String phone, String address, double discountRate) {
         super(customerID, name, phone, address);
         this.discountRate = discountRate;
+        this.points = 0;
     }
 
     public VIPCustomer() {
@@ -13,7 +15,7 @@ public class VIPCustomer extends Customer {
 
     @Override
     public String displayCustomerInfo() {
-        return super.displayCustomerInfo() + " || Discount Rate: " + discountRate;
+        return super.displayCustomerInfo() + " || Discount Rate: " + discountRate + " || Points: " + points;
     }
 
     @Override
@@ -39,6 +41,7 @@ public class VIPCustomer extends Customer {
     public String getBillingInfo() {
         return super.getBillingInfo() 
         + "\nDiscount Rate: " + discountRate
+        + "\nCurrentPoints: " + points
         + "\n---";
     }
 

@@ -104,6 +104,7 @@ public class SalesTransactionView {
             System.out.println("Notification: Transaction canceled. Cart is empty.");
             return;
         }
+        System.out.println("====================================");
         System.out.println("Bill details:");
         System.out.println(customer.getBillingInfo());
         displayCurrentCart(orderDetails);
@@ -160,7 +161,7 @@ public class SalesTransactionView {
     }
 
     private String validateCustomerInput() {
-        System.out.print("Enter Customer ID: (Or type 'cancel' to return to menu) ");
+        System.out.print("Type 'cancel' to return to menu \nEnter Customer ID: ");
         String customerId = scanner.nextLine().trim();
         if (customerId.equalsIgnoreCase("cancel")) {
             return "cancel";
@@ -173,7 +174,7 @@ public class SalesTransactionView {
     }
 
     private String validateProductIDInput(){
-        System.out.print("Enter Product ID: ('done' to finish; 'cancel' to return to menu) ");
+        System.out.print("Type 'done' to finish; 'cancel' to return to menu. \nEnter Product ID:");
         String productIdInput = scanner.nextLine().trim();
         if (productIdInput.equalsIgnoreCase("done")) {
             return "done"; 
@@ -221,7 +222,8 @@ public class SalesTransactionView {
                 System.out.println("ID: " + detail.getProductID() + " - " + product.getName()
                     + "\nCategory: " + product.getCategory()
                     + "\nPrice: $" + detail.getPriceAtPurchase()
-                    + "\nQuantity: " + detail.getQuantity());
+                    + "\nQuantity: " + detail.getQuantity()
+                    + "\nSubtotal: $" + String.format("%.2f", detail.calculateSubTotal()));
                 System.out.println("-----------------------------------");
             }
         }

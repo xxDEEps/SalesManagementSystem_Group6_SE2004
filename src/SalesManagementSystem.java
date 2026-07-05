@@ -42,8 +42,8 @@ public class SalesManagementSystem {
         CustomerRepository customerRepo = new CustomerRepository();
         SalesTransactionRepository salesTransactionRepo = new SalesTransactionRepository();
 
-//        DataSeeder dataSeeder = new DataSeeder(customerRepo, productRepo, salesTransactionRepo);
-//        dataSeeder.seedAllData();
+        DataSeeder dataSeeder = new DataSeeder(customerRepo, productRepo, salesTransactionRepo);
+        dataSeeder.seedAllData();
 
         //cho nay load du lieu tu file
         try {
