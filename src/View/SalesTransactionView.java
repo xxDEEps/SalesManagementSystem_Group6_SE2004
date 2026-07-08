@@ -105,7 +105,8 @@ public class SalesTransactionView {
             return;
         }
         System.out.println("====================================");
-        System.out.println("Bill details:");
+        System.out.println("          Bill details:");
+        System.out.println("====================================");
         System.out.println(customer.getBillingInfo());
         displayCurrentCart(orderDetails);
         double totalAmount = Math.round(salesTransactionController.calculateTotalAmount(customerId, orderDetails) * 100.0) / 100.0;
@@ -208,11 +209,9 @@ public class SalesTransactionView {
         for (OrderDetail detail : orderDetails) {
             Product product = salesTransactionController.checkForExistingProduct(detail.getProductID());
             if (product != null) {
-                System.out.println("ID: " + detail.getProductID() + " - " + product.getName()
-                    + "\nCategory: " + product.getCategory()
-                    + "\nPrice: $" + detail.getPriceAtPurchase()
-                    + "\nQuantity: " + detail.getQuantity()
-                    + "\nSubtotal: $" + String.format("%.2f", detail.calculateSubTotal()));
+                System.out.println("ID: " + detail.getProductID() + " - " + product.getName()+ " | Category: " + product.getCategory()
+                    + "\nQuantity: " + detail.getQuantity()+ " x $" + detail.getPriceAtPurchase()    
+                    + "\n   > Subtotal: $" + String.format("%.2f", detail.calculateSubTotal()));
                 System.out.println("-----------------------------------");
             }
         }

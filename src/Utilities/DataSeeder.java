@@ -38,6 +38,37 @@ public class DataSeeder {
         System.out.println("=== Data Seeding Completed Successfully ===\n");
     }
 
+    private double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+    private double applyCustomerDiscount(String customerId, double amount) {
+        Customer customer = customerRepo.findByCustomerById(customerId);
+        if (customer != null) {
+            return roundToTwoDecimals(customer.calculateFinalPrice(amount));
+        }
+        return roundToTwoDecimals(amount);
+    }
+
+    private void applyVIPTransactionPoints(String customerId, int pointsUsed, double finalAmount) {
+        Customer customer = customerRepo.findByCustomerById(customerId);
+        if (customer instanceof VIPCustomer) {
+            VIPCustomer vipCustomer = (VIPCustomer) customer;
+            if (pointsUsed > 0) {
+                vipCustomer.deductPoints(pointsUsed);
+            }
+            int pointsEarned = (int) (finalAmount / 10);
+            vipCustomer.addPoints(pointsEarned);
+            customerRepo.updateCustomer(customerId, vipCustomer);
+        }
+    }
+
+    private VIPCustomer createVIPCustomer(String customerID, String name, String phone, String address, double discountRate, int initialPoints) {
+        VIPCustomer vipCustomer = new VIPCustomer(customerID, name, phone, address, discountRate);
+        vipCustomer.addPoints(initialPoints);
+        return vipCustomer;
+    }
+
     // Seed Products
     private void seedProducts() {
         System.out.println(">> Seeding Products...");
@@ -85,10 +116,10 @@ public class DataSeeder {
         
         // VIP Customers
         VIPCustomer[] vipCustomers = {
-            new VIPCustomer("V001", "Lisa Anderson", "0906789012", "987 Cedar Lane, Philadelphia", 0.15),
-            new VIPCustomer("V002", "James Taylor", "0907890123", "147 Birch Court, San Antonio", 0.20),
-            new VIPCustomer("V003", "Mary Martinez", "0908901234", "258 Oak Plaza, San Diego", 0.18),
-            new VIPCustomer("V004", "David Lee", "0909012345", "369 Spruce Street, Dallas", 0.12)
+            createVIPCustomer("V001", "Lisa Anderson", "0906789012", "987 Cedar Lane, Philadelphia", 0.15, 120),
+            createVIPCustomer("V002", "James Taylor", "0907890123", "147 Birch Court, San Antonio", 0.20, 90),
+            createVIPCustomer("V003", "Mary Martinez", "0908901234", "258 Oak Plaza, San Diego", 0.18, 50),
+            createVIPCustomer("V004", "David Lee", "0909012345", "369 Spruce Street, Dallas", 0.12, 60)
         };
         
         for (VIPCustomer vipCustomer : vipCustomers) {
@@ -138,10 +169,13 @@ public class DataSeeder {
         List<OrderDetail> orderItems2 = new ArrayList<>();
         orderItems2.add(new OrderDetail("P002", 2, 1299.99));  // 2x iPhone 15 Pro
         orderItems2.add(new OrderDetail("P003", 1, 349.99));   // 1x Headphones
-        double total2 = (2 * 1299.99) + 349.99;
-        SalesTransaction txn2 = new SalesTransaction("V001", orderItems2, total2);
+        double subtotal2 = (2 * 1299.99) + 349.99;
+        double finalTotal2 = roundToTwoDecimals(applyCustomerDiscount("V001", subtotal2) - 2.0);
+        SalesTransaction txn2 = new SalesTransaction("V001", orderItems2, finalTotal2);
         txn2.setSalesTransactionID("T002");
         txn2.setDate(Date.valueOf("2024-01-18"));
+        txn2.setPointsUsed(20);
+        applyVIPTransactionPoints("V001", 20, finalTotal2);
         transactions.add(txn2);
         
         // Transaction 3: Sarah Johnson bought Monitor and Keyboard
@@ -159,10 +193,13 @@ public class DataSeeder {
         orderItems4.add(new OrderDetail("P004", 1, 599.99));   // 1x iPad Air
         orderItems4.add(new OrderDetail("P009", 3, 29.99));    // 3x Phone Case
         orderItems4.add(new OrderDetail("P010", 2, 9.99));     // 2x Screen Protector
-        double total4 = 599.99 + (3 * 29.99) + (2 * 9.99);
-        SalesTransaction txn4 = new SalesTransaction("V002", orderItems4, total4);
+        double subtotal4 = 599.99 + (3 * 29.99) + (2 * 9.99);
+        double finalTotal4 = roundToTwoDecimals(applyCustomerDiscount("V002", subtotal4) - 3.0);
+        SalesTransaction txn4 = new SalesTransaction("V002", orderItems4, finalTotal4);
         txn4.setSalesTransactionID("T004");
         txn4.setDate(Date.valueOf("2024-01-25"));
+        txn4.setPointsUsed(30);
+        applyVIPTransactionPoints("V002", 30, finalTotal4);
         transactions.add(txn4);
         
         // Transaction 5: Michael Brown bought USB Cables and Screen Protectors
@@ -179,10 +216,13 @@ public class DataSeeder {
         List<OrderDetail> orderItems6 = new ArrayList<>();
         orderItems6.add(new OrderDetail("P002", 3, 1299.99));  // 3x iPhone 15 Pro
         orderItems6.add(new OrderDetail("P006", 2, 149.99));   // 2x Keyboard
-        double total6 = (3 * 1299.99) + (2 * 149.99);
-        SalesTransaction txn6 = new SalesTransaction("V003", orderItems6, total6);
+        double subtotal6 = (3 * 1299.99) + (2 * 149.99);
+        double finalTotal6 = roundToTwoDecimals(applyCustomerDiscount("V003", subtotal6) - 4.0);
+        SalesTransaction txn6 = new SalesTransaction("V003", orderItems6, finalTotal6);
         txn6.setSalesTransactionID("T006");
         txn6.setDate(Date.valueOf("2024-02-05"));
+        txn6.setPointsUsed(40);
+        applyVIPTransactionPoints("V003", 40, finalTotal6);
         transactions.add(txn6);
         
         // Transaction 7: Emily Davis small purchase
@@ -222,7 +262,8 @@ public class DataSeeder {
         orderItems10.add(new OrderDetail("P005", 3, 499.99));   // 3x Monitor
         orderItems10.add(new OrderDetail("P006", 10, 149.99));  // 10x Keyboard
         double total10 = (5 * 999.99) + (3 * 499.99) + (10 * 149.99);
-        SalesTransaction txn10 = new SalesTransaction("CORP001", orderItems10, total10);
+        double finalTotal10 = roundToTwoDecimals(applyCustomerDiscount("CORP001", total10));
+        SalesTransaction txn10 = new SalesTransaction("CORP001", orderItems10, finalTotal10);
         txn10.setSalesTransactionID("T010");
         txn10.setDate(Date.valueOf("2024-03-01"));
         transactions.add(txn10);
@@ -233,7 +274,8 @@ public class DataSeeder {
         orderItems11.add(new OrderDetail("P003", 5, 349.99));   // 5x Headphones
         orderItems11.add(new OrderDetail("P009", 20, 29.99));   // 20x Phone Case
         double total11 = (8 * 1299.99) + (5 * 349.99) + (20 * 29.99);
-        SalesTransaction txn11 = new SalesTransaction("CORP002", orderItems11, total11);
+        double finalTotal11 = roundToTwoDecimals(applyCustomerDiscount("CORP002", total11));
+        SalesTransaction txn11 = new SalesTransaction("CORP002", orderItems11, finalTotal11);
         txn11.setSalesTransactionID("T011");
         txn11.setDate(Date.valueOf("2024-03-05"));
         transactions.add(txn11);
@@ -245,7 +287,8 @@ public class DataSeeder {
         orderItems12.add(new OrderDetail("P008", 50, 19.99));   // 50x USB Cable
         orderItems12.add(new OrderDetail("P010", 100, 9.99));   // 100x Screen Protector
         double total12 = (15 * 149.99) + (25 * 49.99) + (50 * 19.99) + (100 * 9.99);
-        SalesTransaction txn12 = new SalesTransaction("CORP003", orderItems12, total12);
+        double finalTotal12 = roundToTwoDecimals(applyCustomerDiscount("CORP003", total12));
+        SalesTransaction txn12 = new SalesTransaction("CORP003", orderItems12, finalTotal12);
         txn12.setSalesTransactionID("T012");
         txn12.setDate(Date.valueOf("2024-03-10"));
         transactions.add(txn12);
@@ -256,7 +299,8 @@ public class DataSeeder {
         orderItems13.add(new OrderDetail("P004", 4, 599.99));   // 4x iPad Air
         orderItems13.add(new OrderDetail("P003", 3, 349.99));   // 3x Headphones
         double total13 = (3 * 999.99) + (4 * 599.99) + (3 * 349.99);
-        SalesTransaction txn13 = new SalesTransaction("CORP004", orderItems13, total13);
+        double finalTotal13 = roundToTwoDecimals(applyCustomerDiscount("CORP004", total13));
+        SalesTransaction txn13 = new SalesTransaction("CORP004", orderItems13, finalTotal13);
         txn13.setSalesTransactionID("T013");
         txn13.setDate(Date.valueOf("2024-03-15"));
         transactions.add(txn13);
@@ -278,7 +322,8 @@ public class DataSeeder {
         orderItems15.add(new OrderDetail("P003", 2, 349.99));
         orderItems15.add(new OrderDetail("P007", 4, 49.99));
         double total15 = 1299.99 + (2 * 349.99) + (4 * 49.99);
-        SalesTransaction txn15 = new SalesTransaction("V001", orderItems15, total15);
+        double finalTotal15 = roundToTwoDecimals(applyCustomerDiscount("V001", total15));
+        SalesTransaction txn15 = new SalesTransaction("V001", orderItems15, finalTotal15);
         txn15.setSalesTransactionID("T015");
         txn15.setDate(Date.valueOf("2024-04-10"));
         transactions.add(txn15);
@@ -300,7 +345,8 @@ public class DataSeeder {
         orderItems17.add(new OrderDetail("P001", 1, 999.99));
         orderItems17.add(new OrderDetail("P006", 8, 149.99));
         double total17 = (2 * 499.99) + 999.99 + (8 * 149.99);
-        SalesTransaction txn17 = new SalesTransaction("CORP001", orderItems17, total17);
+        double finalTotal17 = roundToTwoDecimals(applyCustomerDiscount("CORP001", total17));
+        SalesTransaction txn17 = new SalesTransaction("CORP001", orderItems17, finalTotal17);
         txn17.setSalesTransactionID("T017");
         txn17.setDate(Date.valueOf("2024-05-03"));
         transactions.add(txn17);
@@ -310,7 +356,8 @@ public class DataSeeder {
         orderItems18.add(new OrderDetail("P004", 2, 599.99));
         orderItems18.add(new OrderDetail("P009", 5, 29.99));
         double total18 = (2 * 599.99) + (5 * 29.99);
-        SalesTransaction txn18 = new SalesTransaction("V002", orderItems18, total18);
+        double finalTotal18 = roundToTwoDecimals(applyCustomerDiscount("V002", total18));
+        SalesTransaction txn18 = new SalesTransaction("V002", orderItems18, finalTotal18);
         txn18.setSalesTransactionID("T018");
         txn18.setDate(Date.valueOf("2024-05-12"));
         transactions.add(txn18);
@@ -332,7 +379,8 @@ public class DataSeeder {
         orderItems20.add(new OrderDetail("P003", 3, 349.99));
         orderItems20.add(new OrderDetail("P005", 2, 499.99));
         double total20 = (4 * 1299.99) + (3 * 349.99) + (2 * 499.99);
-        SalesTransaction txn20 = new SalesTransaction("CORP002", orderItems20, total20);
+        double finalTotal20 = roundToTwoDecimals(applyCustomerDiscount("CORP002", total20));
+        SalesTransaction txn20 = new SalesTransaction("CORP002", orderItems20, finalTotal20);
         txn20.setSalesTransactionID("T020");
         txn20.setDate(Date.valueOf("2024-06-01"));
         transactions.add(txn20);
@@ -354,7 +402,8 @@ public class DataSeeder {
         orderItems22.add(new OrderDetail("P001", 1, 999.99));
         orderItems22.add(new OrderDetail("P006", 5, 149.99));
         double total22 = 1299.99 + 999.99 + (5 * 149.99);
-        SalesTransaction txn22 = new SalesTransaction("V003", orderItems22, total22);
+        double finalTotal22 = roundToTwoDecimals(applyCustomerDiscount("V003", total22));
+        SalesTransaction txn22 = new SalesTransaction("V003", orderItems22, finalTotal22);
         txn22.setSalesTransactionID("T022");
         txn22.setDate(Date.valueOf("2024-06-30"));
         transactions.add(txn22);
@@ -376,7 +425,8 @@ public class DataSeeder {
         orderItems24.add(new OrderDetail("P002", 2, 1299.99));
         orderItems24.add(new OrderDetail("P006", 10, 149.99));
         double total24 = (3 * 999.99) + (2 * 1299.99) + (10 * 149.99);
-        SalesTransaction txn24 = new SalesTransaction("CORP001", orderItems24, total24);
+        double finalTotal24 = roundToTwoDecimals(applyCustomerDiscount("CORP001", total24));
+        SalesTransaction txn24 = new SalesTransaction("CORP001", orderItems24, finalTotal24);
         txn24.setSalesTransactionID("T024");
         txn24.setDate(Date.valueOf("2024-07-01"));
         transactions.add(txn24);
@@ -386,7 +436,8 @@ public class DataSeeder {
         orderItems25.add(new OrderDetail("P005", 3, 499.99));
         orderItems25.add(new OrderDetail("P007", 15, 49.99));
         double total25 = (4 * 599.99) + (3 * 499.99) + (15 * 49.99);
-        SalesTransaction txn25 = new SalesTransaction("V002", orderItems25, total25);
+        double finalTotal25 = roundToTwoDecimals(applyCustomerDiscount("V002", total25));
+        SalesTransaction txn25 = new SalesTransaction("V002", orderItems25, finalTotal25);
         txn25.setSalesTransactionID("T025");
         txn25.setDate(Date.valueOf("2024-07-03"));
         transactions.add(txn25);
@@ -416,7 +467,8 @@ public class DataSeeder {
         orderItems28.add(new OrderDetail("P004", 2, 599.99));
         orderItems28.add(new OrderDetail("P006", 12, 149.99));
         double total28 = (3 * 1299.99) + (2 * 599.99) + (12 * 149.99);
-        SalesTransaction txn28 = new SalesTransaction("V001", orderItems28, total28);
+        double finalTotal28 = roundToTwoDecimals(applyCustomerDiscount("V001", total28));
+        SalesTransaction txn28 = new SalesTransaction("V001", orderItems28, finalTotal28);
         txn28.setSalesTransactionID("T028");
         txn28.setDate(Date.valueOf("2024-07-12"));
         transactions.add(txn28);
@@ -426,7 +478,8 @@ public class DataSeeder {
         orderItems29.add(new OrderDetail("P008", 30, 19.99));
         orderItems29.add(new OrderDetail("P009", 25, 29.99));
         double total29 = (4 * 499.99) + (30 * 19.99) + (25 * 29.99);
-        SalesTransaction txn29 = new SalesTransaction("CORP003", orderItems29, total29);
+        double finalTotal29 = roundToTwoDecimals(applyCustomerDiscount("CORP003", total29));
+        SalesTransaction txn29 = new SalesTransaction("CORP003", orderItems29, finalTotal29);
         txn29.setSalesTransactionID("T029");
         txn29.setDate(Date.valueOf("2024-07-15"));
         transactions.add(txn29);
