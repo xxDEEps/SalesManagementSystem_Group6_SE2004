@@ -52,4 +52,12 @@ public class VIPCustomer extends Customer {
     public void addPoints(int points) {
         this.points += points;
     }
+
+    public boolean deductPoints(int points) {
+        if (this.points >= points) {
+            this.points -= points;
+            return true;
+        }
+        return false; // Not enough points to deduct
+    }
 }

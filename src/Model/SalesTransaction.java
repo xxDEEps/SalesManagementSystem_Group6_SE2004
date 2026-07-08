@@ -10,6 +10,8 @@ public class SalesTransaction implements Serializable{
     private Date date;
     private double totalAmount;
     private List<OrderDetail> orderItems;
+    //for VIPCustomer
+    private int pointsUsed = 0;
 
     private String generateTransactionID() {
         return "TXN" + System.currentTimeMillis();
@@ -70,6 +72,12 @@ public class SalesTransaction implements Serializable{
         this.orderItems = orderItems;
     }
 
-    
+    public void setPointsUsed(int pointsUsed) {
+        this.pointsUsed = pointsUsed;
+    }
+
+    public int getPointsUsed() {
+        return pointsUsed;
+    }
 
 }

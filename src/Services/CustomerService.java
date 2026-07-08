@@ -81,4 +81,17 @@ public class CustomerService {
             repository.updateCustomer(customerId, vipCustomer);
         }
     }
+
+    public boolean deductPointsFromVIPCustomer(String customerId, int pointsToDeduct) {
+        Customer customer = repository.findByCustomerById(customerId);
+        if (customer instanceof Model.VIPCustomer) {
+            Model.VIPCustomer vipCustomer = (Model.VIPCustomer) customer;
+            if (vipCustomer.getPoints() >= pointsToDeduct) {
+                vipCustomer.deductPoints(pointsToDeduct);
+                repository.updateCustomer(customerId, vipCustomer);
+                return true;
+            }
+        }
+        return false;
+    }
 }
