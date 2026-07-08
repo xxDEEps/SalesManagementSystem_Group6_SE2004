@@ -1,5 +1,6 @@
 package Services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -96,6 +97,33 @@ public class SalesTransactionService {
     public List<SalesTransaction> getAllSalesTransactions() {
         return salesTransactionRepository.getSalesTransactionsList();
     }
+
+    public List<SalesTransaction> getSalesTransactionsByMonthAndYear() {
+        String monthYear = "";
+        List<SalesTransaction> allTransactions = salesTransactionRepository.getSalesTransactionsList();
+        System.out.println("Enter month and year to filter transactions (MM/yyyy): \n(or type 'cancel' to return to the main menu)");
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            monthYear = scanner.nextLine().trim();
+            if (monthYear.equalsIgnoreCase("cancel")) {
+                return new ArrayList<>();
+            }
+            if (monthYear.matches("\\d{2}/\\d{4}")) {
+                break;
+            } else {
+                System.out.println("Invalid format. Please enter in MM/yyyy format. Or type 'cancel' to return to the main menu.");
+            }
+        }
+        List<SalesTransaction> filteredTransactions = new ArrayList<>();
+        for (SalesTransaction transaction : allTransactions) {
+            String transactionMonthYear = new java.text.SimpleDateFormat("MM/yyyy").format(transaction.getDate());
+            if (transactionMonthYear.equals(monthYear)) {
+                filteredTransactions.add(transaction);
+            }
+        }
+        return filteredTransactions;
+    }
+
 
     public String checkForSufficientStock(String productId, int quantity) {
         Product product = productService.getProductById(productId);

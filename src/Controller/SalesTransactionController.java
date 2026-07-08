@@ -82,6 +82,10 @@ public class SalesTransactionController {
         return salesTransactionService.getAllSalesTransactions();
     }
 
+    public List<SalesTransaction> handleGetSalesTransactionHistoryByMonthAndYear() {
+        return salesTransactionService.getSalesTransactionsByMonthAndYear();
+    }
+
     public void printSalesTransaction(SalesTransaction transaction) {
         salesTransactionService.printSalesTransaction(transaction);
     }

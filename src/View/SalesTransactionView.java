@@ -137,18 +137,45 @@ public class SalesTransactionView {
         }
     }
     private void handleViewTransactionHistory() {
-        System.out.println("\n--- TRANSACTION HISTORY ---");
-        List<SalesTransaction> transactions = salesTransactionController.handleGetSalesTransactionHistory();
-        if (transactions.isEmpty()) {
-            System.out.println("No transactions found.");
-            return;
+        //choose period of time to view transaction history
+        while (true) {
+            System.out.println("\n--- VIEW SALES TRANSACTION HISTORY ---");
+            System.out.println("1. View All Transactions");
+            System.out.println("2. View Transactions by Date Range");
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine().trim();
+            
+            if (choice.equals("1")) {
+                System.out.println("\n--- TRANSACTION HISTORY ---");
+                List<SalesTransaction> transactions = salesTransactionController.handleGetSalesTransactionHistory();
+                if (transactions.isEmpty()) {
+                    System.out.println("No transactions found.");
+                    return;
+                }
+                for (SalesTransaction transaction : transactions) {
+                    salesTransactionController.printSalesTransaction(transaction);
+                }
+                break;
+            } else if (choice.equals("2")) {
+                System.out.println("\n--- TRANSACTION HISTORY BY DATE RANGE ---");
+                List<SalesTransaction> transactions = salesTransactionController.handleGetSalesTransactionHistoryByMonthAndYear();
+                if (transactions.isEmpty()) {
+                    System.out.println("No transactions found for the specified date range.");
+                    return;
+                }
+                for (SalesTransaction transaction : transactions) {
+                    salesTransactionController.printSalesTransaction(transaction);
+                }
+                break;
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
         }
-        // Display transactions in newest to oldest order
-        //transactions.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
-        for (SalesTransaction transaction : transactions) {
-            salesTransactionController.printSalesTransaction(transaction);
-        }
+        
     }
+    
+
+
 
     private String validateCustomerInput() {
         System.out.print("Type 'cancel' to return to menu \nEnter Customer ID: ");
