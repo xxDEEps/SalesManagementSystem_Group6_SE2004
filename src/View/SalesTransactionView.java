@@ -69,7 +69,7 @@ public class SalesTransactionView {
         System.out.println("\n--- ADD PRODUCTS TO TRANSACTION ---");
         while (true) {
            
-            String productId = validateProductIDInput();
+            String productId = validateProductIDInput(orderDetails);
             if (productId == null) {
                 System.out.println("Product does not exist or is deleted. Please try again.");
                 continue;
@@ -79,6 +79,9 @@ public class SalesTransactionView {
             }else if (productId.equalsIgnoreCase("cancel")) {
                 System.out.println("Returning to menu...");
                 return;
+            } else if (productId.equalsIgnoreCase("duplicate")) {
+                System.out.println("Product already exists in the current cart. Please edit the quantity instead.");
+                continue;
             }
             Product product = salesTransactionController.checkForExistingProduct(productId);
             System.out.println("Selected Product: " + product.getName() + " | Price: $" + product.getPrice() + " | Stock: " + product.getStockQuantity());
@@ -190,7 +193,7 @@ public class SalesTransactionView {
         return response; 
     }
 
-    private String validateProductIDInput(){
+    private String validateProductIDInput(List<OrderDetail> orderDetails){
         System.out.print("Type 'done' to finish; 'cancel' to return to menu. \nEnter Product ID:");
         String productIdInput = scanner.nextLine().trim();
         if (productIdInput.equalsIgnoreCase("done")) {
@@ -199,6 +202,13 @@ public class SalesTransactionView {
         if (productIdInput.equalsIgnoreCase("cancel")) {
             return "cancel"; 
         }
+
+        for (OrderDetail detail : orderDetails) {
+            if (detail.getProductID().equalsIgnoreCase(productIdInput)) {
+                return "duplicate";
+            }
+        }
+
         Product existingProduct = salesTransactionController.checkForExistingProduct(productIdInput);
             if (existingProduct == null) {
                 return null; // Không tồn tại hoặc đã bị xóa
