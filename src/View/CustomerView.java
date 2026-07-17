@@ -47,22 +47,65 @@ public class CustomerView {
         System.out.println("1. Regular Customer");
         System.out.println("2. VIP Customer");
         System.out.println("3. Corporate Customer");
+        System.out.println("Tip: type 'cancel' at any prompt to abort this action.");
 
         String customerType = validateCustomerType("Choose type (1-3): ");
+        if (customerType == null) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
 
         String id      = validateCustomerID("Enter Customer ID: ");
+        if (id == null) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
+
         String name    = validateName("Enter Full Name: ");
+        if (name == null) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
+
         String phone   = validatePhone("Enter Phone Number: ");
+        if (phone == null) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
+
         String address = validateAddress("Enter Address: ");
+        if (address == null) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
 
         Customer customer;
         if (customerType.equals("2")) {
             double discountRate = validateDiscountRate("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
+            if (Double.isNaN(discountRate)) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
             customer = new VIPCustomer(id, name, phone, address, discountRate);
         } else if (customerType.equals("3")) {
             String companyName = validateCompanyName("Enter Company Name: ");
-            String taxID       = validateTaxID("Enter Tax ID: ");
+            if (companyName == null) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+
+            String taxID = validateTaxID("Enter Tax ID: ");
+            if (taxID == null) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+
             double negotiatedDiscountRate = validateDiscountRate("Enter Negotiated Discount Rate (e.g., 0.1 for 10%): ");
+            if (Double.isNaN(negotiatedDiscountRate)) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+
             customer = new CorporateCustomer(id, name, phone, address, companyName, taxID, negotiatedDiscountRate);
         } else {
             customer = new Customer(id, name, phone, address);
@@ -79,10 +122,15 @@ public class CustomerView {
 
     private void handleUpdateCustomer() {
         System.out.println("\n--- UPDATE CUSTOMER ---");
+        System.out.println("Tip: type 'cancel' at any prompt to abort this action.");
 
         Customer existingCustomer = null;
         while (true) {
             String id = validateCustomerIDForUpdate("Enter Customer ID to update: ");
+            if (id == null) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
             existingCustomer = customerController.handleGetById(id);
             if (existingCustomer != null) break;
             System.out.println(">> Error: Customer ID not found! Please try again.");
@@ -91,30 +139,42 @@ public class CustomerView {
         // Name
         String name;
         while (true) {
-            System.out.print("Enter New Name (leave blank to skip): ");
-            name = scanner.nextLine().trim();
-            if (name.isEmpty()) { name = existingCustomer.getName(); break; }
-            if (name.length() > 50) { System.out.println("Name must not exceed 50 characters."); continue; }
+            String input = readInput("Enter New Name (leave blank to skip): ");
+            if (input == null) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+            if (input.isEmpty()) { name = existingCustomer.getName(); break; }
+            if (input.length() > 50) { System.out.println("Name must not exceed 50 characters."); continue; }
+            name = input;
             break;
         }
 
         // Phone
         String phone;
         while (true) {
-            System.out.print("Enter New Phone (leave blank to skip): ");
-            phone = scanner.nextLine().trim();
-            if (phone.isEmpty()) { phone = existingCustomer.getPhone(); break; }
-            if (!phone.matches("0[0-9]{9}")) { System.out.println("Phone must start with 0 and have exactly 10 digits."); continue; }
+            String input = readInput("Enter New Phone (leave blank to skip): ");
+            if (input == null) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+            if (input.isEmpty()) { phone = existingCustomer.getPhone(); break; }
+            if (!input.matches("0[0-9]{9}")) { System.out.println("Phone must start with 0 and have exactly 10 digits."); continue; }
+            phone = input;
             break;
         }
 
         // Address
         String address;
         while (true) {
-            System.out.print("Enter New Address (leave blank to skip): ");
-            address = scanner.nextLine().trim();
-            if (address.isEmpty()) { address = existingCustomer.getAddress(); break; }
-            if (address.length() > 100) { System.out.println("Address must not exceed 100 characters."); continue; }
+            String input = readInput("Enter New Address (leave blank to skip): ");
+            if (input == null) {
+                System.out.println("Operation cancelled.");
+                return;
+            }
+            if (input.isEmpty()) { address = existingCustomer.getAddress(); break; }
+            if (input.length() > 100) { System.out.println("Address must not exceed 100 characters."); continue; }
+            address = input;
             break;
         }
 
@@ -125,26 +185,37 @@ public class CustomerView {
 
             String companyName;
             while (true) {
-                System.out.print("Enter New Company Name (leave blank to skip): ");
-                companyName = scanner.nextLine().trim();
-                if (companyName.isEmpty()) { companyName = existing.getCompanyName(); break; }
-                if (companyName.length() > 100) { System.out.println("Company name must not exceed 100 characters."); continue; }
+                String input = readInput("Enter New Company Name (leave blank to skip): ");
+                if (input == null) {
+                    System.out.println("Operation cancelled.");
+                    return;
+                }
+                if (input.isEmpty()) { companyName = existing.getCompanyName(); break; }
+                if (input.length() > 100) { System.out.println("Company name must not exceed 100 characters."); continue; }
+                companyName = input;
                 break;
             }
 
             String taxID;
             while (true) {
-                System.out.print("Enter New Tax ID (leave blank to skip): ");
-                taxID = scanner.nextLine().trim();
-                if (taxID.isEmpty()) { taxID = existing.getTaxID(); break; }
-                if (!taxID.matches("[A-Za-z0-9]+")) { System.out.println("Tax ID must only contain letters and numbers."); continue; }
+                String input = readInput("Enter New Tax ID (leave blank to skip): ");
+                if (input == null) {
+                    System.out.println("Operation cancelled.");
+                    return;
+                }
+                if (input.isEmpty()) { taxID = existing.getTaxID(); break; }
+                if (!input.matches("[A-Za-z0-9]+")) { System.out.println("Tax ID must only contain letters and numbers."); continue; }
+                taxID = input;
                 break;
             }
 
             double negotiatedDiscountRate;
             while (true) {
-                System.out.print("Enter New Negotiated Discount Rate (leave blank to skip): ");
-                String input = scanner.nextLine().trim();
+                String input = readInput("Enter New Negotiated Discount Rate (leave blank to skip): ");
+                if (input == null) {
+                    System.out.println("Operation cancelled.");
+                    return;
+                }
                 if (input.isEmpty()) { negotiatedDiscountRate = existing.getNegotiatedDiscountRate(); break; }
                 try {
                     negotiatedDiscountRate = Double.parseDouble(input);
@@ -160,8 +231,11 @@ public class CustomerView {
         } else if (existingCustomer instanceof VIPCustomer) {
             double discountRate;
             while (true) {
-                System.out.print("Enter New VIP Discount Rate (leave blank to skip): ");
-                String input = scanner.nextLine().trim();
+                String input = readInput("Enter New VIP Discount Rate (leave blank to skip): ");
+                if (input == null) {
+                    System.out.println("Operation cancelled.");
+                    return;
+                }
                 if (input.isEmpty()) { discountRate = ((VIPCustomer) existingCustomer).getDiscountRate(); break; }
                 try {
                     discountRate = Double.parseDouble(input);
@@ -188,8 +262,13 @@ public class CustomerView {
 
     private void handleRemoveCustomer() {
         System.out.println("\n--- REMOVE CUSTOMER ---");
+        System.out.println("Tip: type 'cancel' at any prompt to abort this action.");
 
         String id = validateCustomerIDForDelete("Enter Customer ID to remove: ");
+        if (id == null) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
 
         if (customerController.handleDelete(id)) {
             System.out.println(">> Customer removed successfully (Soft Deleted)!");
@@ -213,12 +292,25 @@ public class CustomerView {
         }
     }
 
+    private String readInput(String message) {
+        System.out.print(message);
+        String input = scanner.nextLine().trim();
+        if (input.equalsIgnoreCase("cancel")) {
+            return null;
+        }
+        return input;
+    }
+
+    private boolean isCancelled(String input) {
+        return input == null;
+    }
+
     // ================= VALIDATE CUSTOMER TYPE =================
 
     private String validateCustomerType(String message) {
         while (true) {
-            System.out.print(message);
-            String type = scanner.nextLine().trim();
+            String type = readInput(message);
+            if (isCancelled(type)) return null;
             if (type.equals("1") || type.equals("2") || type.equals("3")) return type;
             System.out.println("Please enter 1, 2, or 3.");
         }
@@ -228,8 +320,8 @@ public class CustomerView {
 
     private String validateCustomerID(String message) {
         while (true) {
-            System.out.print(message);
-            String id = scanner.nextLine().trim();
+            String id = readInput(message);
+            if (isCancelled(id)) return null;
             if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
             if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
             if (customerController.isCustomerIdExistsIncludingDeleted(id)) {
@@ -242,8 +334,8 @@ public class CustomerView {
 
     private String validateCustomerIDForUpdate(String message) {
         while (true) {
-            System.out.print(message);
-            String id = scanner.nextLine().trim();
+            String id = readInput(message);
+            if (isCancelled(id)) return null;
             if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
             if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
             if (customerController.handleGetById(id) == null) {
@@ -256,8 +348,8 @@ public class CustomerView {
 
     private String validateCustomerIDForDelete(String message) {
         while (true) {
-            System.out.print(message);
-            String id = scanner.nextLine().trim();
+            String id = readInput(message);
+            if (isCancelled(id)) return null;
             if (id.isEmpty()) { System.out.println("Customer ID cannot be empty."); continue; }
             if (!id.matches("[A-Za-z0-9]+")) { System.out.println("Customer ID must only contain letters and numbers."); continue; }
             if (customerController.handleGetById(id) == null) {
@@ -272,8 +364,8 @@ public class CustomerView {
 
     private String validateName(String message) {
         while (true) {
-            System.out.print(message);
-            String name = scanner.nextLine().trim();
+            String name = readInput(message);
+            if (isCancelled(name)) return null;
             if (name.isEmpty()) { System.out.println("Name cannot be empty."); continue; }
             if (name.length() > 50) { System.out.println("Name must not exceed 50 characters."); continue; }
             return name;
@@ -284,8 +376,8 @@ public class CustomerView {
 
     private String validatePhone(String message) {
         while (true) {
-            System.out.print(message);
-            String phone = scanner.nextLine().trim();
+            String phone = readInput(message);
+            if (isCancelled(phone)) return null;
             if (phone.isEmpty()) { System.out.println("Phone number cannot be empty."); continue; }
             if (!phone.matches("0[0-9]{9}")) { System.out.println("Phone must start with 0 and have exactly 10 digits."); continue; }
             return phone;
@@ -296,8 +388,8 @@ public class CustomerView {
 
     private String validateAddress(String message) {
         while (true) {
-            System.out.print(message);
-            String address = scanner.nextLine().trim();
+            String address = readInput(message);
+            if (isCancelled(address)) return null;
             if (address.isEmpty()) { System.out.println("Address cannot be empty."); continue; }
             if (address.length() > 100) { System.out.println("Address must not exceed 100 characters."); continue; }
             return address;
@@ -308,8 +400,8 @@ public class CustomerView {
 
     private String validateCompanyName(String message) {
         while (true) {
-            System.out.print(message);
-            String companyName = scanner.nextLine().trim();
+            String companyName = readInput(message);
+            if (isCancelled(companyName)) return null;
             if (companyName.isEmpty()) { System.out.println("Company name cannot be empty."); continue; }
             if (companyName.length() > 100) { System.out.println("Company name must not exceed 100 characters."); continue; }
             return companyName;
@@ -320,8 +412,8 @@ public class CustomerView {
 
     private String validateTaxID(String message) {
         while (true) {
-            System.out.print(message);
-            String taxID = scanner.nextLine().trim();
+            String taxID = readInput(message);
+            if (isCancelled(taxID)) return null;
             if (taxID.isEmpty()) { System.out.println("Tax ID cannot be empty."); continue; }
             if (!taxID.matches("[A-Za-z0-9]+")) { System.out.println("Tax ID must only contain letters and numbers."); continue; }
             return taxID;
@@ -332,8 +424,8 @@ public class CustomerView {
 
     private double validateDiscountRate(String message) {
         while (true) {
-            System.out.print(message);
-            String input = scanner.nextLine().trim();
+            String input = readInput(message);
+            if (input == null) return Double.NaN;
             if (input.isEmpty()) { System.out.println("Discount rate cannot be empty."); continue; }
             try {
                 double rate = Double.parseDouble(input);
