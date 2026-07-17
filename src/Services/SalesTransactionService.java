@@ -30,7 +30,7 @@ public class SalesTransactionService {
         for (OrderDetail detail : orderDetails) {
             total += detail.calculateSubTotal();
         }
-        return total * (1 - customerService.getCustomerById(customerId).getDiscountRate());
+        return customerService.getCustomerById(customerId).calculateFinalPrice(total);
     }
 
     public void addSalesTransaction(String customerId, List<OrderDetail> orderDetails, double totalAmount) throws Exception {
