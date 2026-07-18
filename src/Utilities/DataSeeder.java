@@ -374,16 +374,7 @@ public class DataSeeder {
         transactions.add(txn19);
 
         // Transaction 20: Corporate customer buys premium phones in June
-        List<OrderDetail> orderItems20 = new ArrayList<>();
-        orderItems20.add(new OrderDetail("P002", 4, 1299.99));
-        orderItems20.add(new OrderDetail("P003", 3, 349.99));
-        orderItems20.add(new OrderDetail("P005", 2, 499.99));
-        double total20 = (4 * 1299.99) + (3 * 349.99) + (2 * 499.99);
-        double finalTotal20 = roundToTwoDecimals(applyCustomerDiscount("CORP002", total20));
-        SalesTransaction txn20 = new SalesTransaction("CORP002", orderItems20, finalTotal20);
-        txn20.setSalesTransactionID("T020");
-        txn20.setDate(Date.valueOf("2024-06-01"));
-        transactions.add(txn20);
+        
 
         // Transaction 21: Emily Davis buys laptop and iPad in June
         List<OrderDetail> orderItems21 = new ArrayList<>();
@@ -494,6 +485,17 @@ public class DataSeeder {
         txn30.setSalesTransactionID("T030");
         txn30.setDate(Date.valueOf("2024-07-20"));
         transactions.add(txn30);
+        
+        List<OrderDetail> orderItems20 = new ArrayList<>();
+        orderItems20.add(new OrderDetail("P002", 4, 1299.99));
+        orderItems20.add(new OrderDetail("P003", 3, 349.99));
+        orderItems20.add(new OrderDetail("P005", 2, 499.99));
+        double total20 = (4 * 1299.99) + (3 * 349.99) + (2 * 499.99);
+        double finalTotal20 = roundToTwoDecimals(applyCustomerDiscount("CORP002", total20));
+        SalesTransaction txn20 = new SalesTransaction("CORP002", orderItems20, finalTotal20);
+        txn20.setSalesTransactionID("T020");
+        txn20.setDate(Date.valueOf("2024-07-20"));
+        transactions.add(txn20);
         
         try {
             salesTransactionRepo.writeTransactionsToFile(transactions);
