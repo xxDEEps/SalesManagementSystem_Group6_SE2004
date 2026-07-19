@@ -29,7 +29,7 @@ public class SalesTransactionRepository extends AbstractFileRepository implement
     }
 
     public List<SalesTransaction> getSalesTransactionsList() {
-        return salesTransactionsList;
+        return new ArrayList<>(salesTransactionsList);
     }
 
     public void addSalesTransaction(SalesTransaction transaction) throws Exception {
