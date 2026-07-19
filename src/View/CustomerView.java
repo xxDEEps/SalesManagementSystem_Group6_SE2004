@@ -285,11 +285,51 @@ public class CustomerView {
 
         if (customers.isEmpty()) {
             System.out.println("No active customers found.");
-        } else {
-            for (Customer c : customers) {
-                System.out.println(c.displayCustomerInfo());
-            }
+            return;
         }
+
+        System.out.println("+-----+-----------+----------------+------------+-----------+----------------------------------------------+");
+        System.out.printf("| %-3s | %-9s | %-14s | %-8s   | %-9s | %-44s |\n",
+                "No", "Cust ID", "Name", "Phone", "Type", "Extra Info");
+        System.out.println("+-----+-----------+----------------+------------+-----------+----------------------------------------------+");
+
+        for (int i = 0; i < customers.size(); i++) {
+            Customer customer = customers.get(i);
+
+            String name = customer.getName();
+            if (name.length() > 14) {
+                name = name.substring(0, 11) + "...";
+            }
+
+            String type = "Regular";
+            String extraInfo = "";
+
+            if (customer instanceof VIPCustomer) {
+                type = "VIP";
+                VIPCustomer vip = (VIPCustomer) customer;
+                int points = vip.getPoints();
+                String discountPercentage = String.format("%.0f%%", vip.getDiscountRate() * 100);
+                extraInfo = String.format("%s | %d pts", discountPercentage, points);
+            } else if (customer instanceof CorporateCustomer) {
+                type = "Corporate";
+                CorporateCustomer corp = (CorporateCustomer) customer;
+                String companyName = corp.getCompanyName();
+                if (companyName.length() > 25) {
+                    companyName = companyName.substring(0, 22) + "...";
+                }
+                extraInfo = String.format("%s | %s", companyName, corp.getTaxID());
+            }
+
+            System.out.printf("| %-3d | %-9s | %-14s | %-8s | %-9s | %-44s |\n",
+                    i + 1,
+                    customer.getCustomerID(),
+                    name,
+                    customer.getPhone(),
+                    type,
+                    extraInfo);
+        }
+
+        System.out.println("+-----+-----------+----------------+------------+-----------+----------------------------------------------+");
     }
 
     private String readInput(String message) {

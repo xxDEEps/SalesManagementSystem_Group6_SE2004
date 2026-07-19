@@ -137,55 +137,65 @@ public class SalesTransactionService {
         Customer customer = customerService.getCustomerById(transaction.getCustomerID());
         String customerName = (customer != null) ? customer.getName() : "Unknown Customer";
 
-        System.out.println("======================================================");
-        System.out.println("                  SALES INVOICE");
-        System.out.println("======================================================");
+        System.out.println("====================================================================");
+        System.out.println("                           SALES INVOICE");
+        System.out.println("====================================================================");
         System.out.println("Transaction ID : " + transaction.getSalesTransactionID());
         System.out.println("Customer ID    : " + transaction.getCustomerID());
         System.out.println("Customer Name  : " + customerName);
         System.out.println("Date           : " + transaction.getDate());
-        System.out.println("------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------");
         System.out.println("ITEMS");
-        System.out.println("------------------------------------------------------");
+        System.out.println("+--------------------------------+-----+------------+--------------+");
+        System.out.printf("| %-30s | %-3s | %-10s | %-12s |%n", "Product Name", "Qty", "Price", "Subtotal");
+        System.out.println("+--------------------------------+-----+------------+--------------+");
 
         double subtotal = 0.0;
         for (OrderDetail detail : transaction.getOrderItems()) {
             Product product = productService.getProductByIdIncludingDeleted(detail.getProductID());
             String productName = (product != null) ? product.getName() : "Unknown Product";
+            if (productName.length() > 30) {
+                productName = productName.substring(0, 27) + "...";
+            }
             double lineSubtotal = detail.calculateSubTotal();
             subtotal += lineSubtotal;
 
-            System.out.printf("- %-28s Qty: %2d  @ $%7.2f%n", productName, detail.getQuantity(), detail.getPriceAtPurchase());
-            System.out.printf("  Subtotal: $%10.2f%n", lineSubtotal);
+            System.out.printf("| %-30s | %3d | $%9.2f | $%11.2f |%n", 
+                    productName, 
+                    detail.getQuantity(), 
+                    detail.getPriceAtPurchase(), 
+                    lineSubtotal);
         }
 
-        System.out.println("------------------------------------------------------");
-        System.out.printf("Subtotal        : $%10.2f%n", subtotal);
+        System.out.println("+--------------------------------+-----+------------+--------------+");
+        System.out.printf("Subtotal              : $%10.2f%n", subtotal);
 
         if (customer instanceof VIPCustomer) {
             VIPCustomer vipCustomer = (VIPCustomer) customer;
             int pointsUsed = transaction.getPointsUsed();
             if (pointsUsed > 0) {
-                System.out.printf("Points Used    : %10d%n", pointsUsed);
+                System.out.printf("Points Used           : %10d%n", pointsUsed);
             }
-            System.out.printf("VIP Discount   : $%10.2f%n", subtotal * vipCustomer.getDiscountRate());
+            double vipRate = vipCustomer.getDiscountRate();
+            System.out.printf("VIP Discount (%.0f%%)    : $%10.2f%n", vipRate * 100, subtotal * vipRate);
         }
 
         if (customer instanceof CorporateCustomer && subtotal > 500) {
             CorporateCustomer corporateCustomer = (CorporateCustomer) customer;
-            System.out.printf("Corporate Discount   : $%10.2f%n", subtotal * corporateCustomer.getDiscountRate());
+            double corpRate = corporateCustomer.getDiscountRate();
+            System.out.printf("Corp Discount (%.0f%%)   : $%10.2f%n", corpRate * 100, subtotal * corpRate);
         }
 
-        System.out.println("------------------------------------------------------");
-        System.out.printf("TOTAL          : $%10.2f%n", transaction.getTotalAmount());
+        System.out.println("--------------------------------------------------------------------");
+        System.out.printf("TOTAL                 : $%10.2f%n", transaction.getTotalAmount());
 
         if (customer instanceof VIPCustomer) {
             int pointsEarned = (int) (transaction.getTotalAmount() / 10);
-            System.out.println("Points Earned  : " + pointsEarned);
-            System.out.println("Current Points : " + ((VIPCustomer) customer).getPoints());
+            System.out.println("Points Earned         : " + pointsEarned);
+            System.out.println("Current Points        : " + ((VIPCustomer) customer).getPoints());
         }
 
-        System.out.println("======================================================");
+        System.out.println("====================================================================");
     }
 
 }
