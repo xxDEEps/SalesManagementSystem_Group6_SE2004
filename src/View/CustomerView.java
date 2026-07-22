@@ -81,7 +81,7 @@ public class CustomerView {
 
         Customer customer;
         if (customerType.equals("2")) {
-            double discountRate = validateDiscountRate("Enter VIP Discount Rate (e.g., 0.1 for 10%): ");
+            double discountRate = validateDiscountRate("Enter VIP Discount Rate (0.01 to 0.1): ", 0.01, 0.1);
             if (Double.isNaN(discountRate)) {
                 System.out.println("Operation cancelled.");
                 return;
@@ -100,7 +100,7 @@ public class CustomerView {
                 return;
             }
 
-            double negotiatedDiscountRate = validateDiscountRate("Enter Negotiated Discount Rate (e.g., 0.1 for 10%): ");
+            double negotiatedDiscountRate = validateDiscountRate("Enter Negotiated Discount Rate (0.0 to 1.0): ", 0.0, 1.0);
             if (Double.isNaN(negotiatedDiscountRate)) {
                 System.out.println("Operation cancelled.");
                 return;
@@ -211,7 +211,7 @@ public class CustomerView {
 
             double negotiatedDiscountRate;
             while (true) {
-                String input = readInput("Enter New Negotiated Discount Rate (leave blank to skip): ");
+                String input = readInput("Enter New Negotiated Discount Rate (0.0 - 1.0, leave blank to skip): ");
                 if (input == null) {
                     System.out.println("Operation cancelled.");
                     return;
@@ -231,7 +231,7 @@ public class CustomerView {
         } else if (existingCustomer instanceof VIPCustomer) {
             double discountRate;
             while (true) {
-                String input = readInput("Enter New VIP Discount Rate (leave blank to skip): ");
+                String input = readInput("Enter New VIP Discount Rate (0.01 - 0.1, leave blank to skip): ");
                 if (input == null) {
                     System.out.println("Operation cancelled.");
                     return;
@@ -239,7 +239,7 @@ public class CustomerView {
                 if (input.isEmpty()) { discountRate = ((VIPCustomer) existingCustomer).getDiscountRate(); break; }
                 try {
                     discountRate = Double.parseDouble(input);
-                    if (discountRate < 0 || discountRate > 1) { System.out.println("Discount rate must be between 0 and 1."); continue; }
+                    if (discountRate < 0.01 || discountRate > 0.1) { System.out.println("Discount rate must be between 0.01 and 0.1."); continue; }
                     break;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid discount rate.");
@@ -422,14 +422,17 @@ public class CustomerView {
 
     // ================= VALIDATE DISCOUNT RATE =================
 
-    private double validateDiscountRate(String message) {
+    private double validateDiscountRate(String message, double min, double max) {
         while (true) {
             String input = readInput(message);
             if (input == null) return Double.NaN;
             if (input.isEmpty()) { System.out.println("Discount rate cannot be empty."); continue; }
             try {
                 double rate = Double.parseDouble(input);
-                if (rate < 0 || rate > 1) { System.out.println("Discount rate must be between 0 and 1."); continue; }
+                if (rate < min || rate > max) { 
+                    System.out.printf("Discount rate must be between %.2f and %.2f.\n", min, max); 
+                    continue; 
+                }
                 return rate;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid discount rate. Please enter a number (e.g., 0.1).");
