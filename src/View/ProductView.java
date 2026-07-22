@@ -187,9 +187,34 @@ public class ProductView {
             return;
         }
 
-        for (Product product : products) {
-            System.out.println(product.displayProductInfo());
+        System.out.println("+-----+--------------+---------------------------+-----------------+----------+--------+");
+        System.out.printf("| %-3s | %-12s | %-25s | %-15s | %-8s | %-6s |\n",
+                "No", "Product ID", "Name", "Category", "Price", "Stock");
+        System.out.println("+-----+--------------+---------------------------+-----------------+----------+--------+");
+
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+
+            String name = product.getName();
+            if (name.length() > 25) {
+                name = name.substring(0, 22) + "...";
+            }
+
+            String category = product.getCategory();
+            if (category.length() > 15) {
+                category = category.substring(0, 12) + "...";
+            }
+
+            System.out.printf("| %-3d | %-12s | %-25s | %-15s | %-8.2f | %-6d |\n",
+                    i + 1,
+                    product.getProductID(),
+                    name,
+                    category,
+                    product.getPrice(),
+                    product.getStockQuantity());
         }
+
+        System.out.println("+-----+--------------+---------------------------+-----------------+----------+--------+");
     }
 
     // ================= SEARCH PRODUCT =================
